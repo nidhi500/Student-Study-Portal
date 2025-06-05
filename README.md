@@ -1,1 +1,1 @@
-# Student-Study-Portal
+A personalized student support platform combining academic semester resources and career preparation tools. Built with Java, React, Tailwind CSS, and PostgreSQL, it offers features like semester-wise subject content, GATE/placement prep, streak and badge tracking, and a community-driven contribution system.
