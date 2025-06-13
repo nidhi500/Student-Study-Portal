@@ -1,23 +1,32 @@
 package com.studentcompanion.controller;
 
-import com.studentcompanion.dto.AuthRequest;
-import com.studentcompanion.dto.AuthResponse;
-import com.studentcompanion.model.User;
-import com.studentcompanion.repository.UserRepository;
-import com.studentcompanion.service.CustomUserDetailsService;
-import com.studentcompanion.util.JwtUtil;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.Collections;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+import com.studentcompanion.dto.AuthRequest;
+import com.studentcompanion.dto.AuthResponse;
+import com.studentcompanion.model.User;
+import com.studentcompanion.repository.UserRepository;
+import com.studentcompanion.service.CustomUserDetailsService;
+import com.studentcompanion.util.JwtUtil;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -56,9 +65,11 @@ public class AuthController {
             );
             System.out.println("Authentication successful for: " + authRequest.getEmail());
         } catch (BadCredentialsException e) {
-            System.out.println("Bad credentials for: " + authRequest.getEmail());
-            throw new Exception("Invalid credentials", e);
-        }
+    System.out.println("Bad credentials for: " + authRequest.getEmail());
+    return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(Collections.singletonMap("message", "Invalid email or password"));
+}
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
@@ -82,11 +93,11 @@ public class AuthController {
 
         // Check if user already exists
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            System.out.println("Email already exists: " + user.getEmail());
-            Map<String, String> error = new HashMap<>();
-            error.put("email", "Email already exists!");
-            return ResponseEntity.badRequest().body(error);
-        }
+    System.out.println("Email already exists: " + user.getEmail());
+    return ResponseEntity
+        .status(HttpStatus.BAD_REQUEST)
+        .body(Collections.singletonMap("message", "Email already exists"));
+}
 
         try {
             // Encode password
