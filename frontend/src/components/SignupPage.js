@@ -25,8 +25,9 @@ function SignupPage() {
 
       navigate("/dashboard");
     }catch (err) {
-  const errorMessage = err.response?.data?.email || "Signup failed";
-  console.error("Signup failed:", errorMessage);
+  console.log("Full error response:", err.response?.data);
+const errorMessage = err.response?.data?.message || err.response?.data?.error || "Signup failed";
+
 if (errorMessage.toLowerCase().includes("email already exists") || errorMessage.toLowerCase().includes("user already exists")) {
   setError("Email already exists. Redirecting to login...");
   setLoading(true);

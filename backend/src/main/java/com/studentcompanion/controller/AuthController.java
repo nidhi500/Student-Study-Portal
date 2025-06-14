@@ -71,6 +71,7 @@ public class AuthController {
             .body(Collections.singletonMap("message", "Invalid email or password"));
 }
 
+
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
         
@@ -115,9 +116,9 @@ public class AuthController {
             
         } catch (Exception e) {
             System.err.println("Error during registration: " + e.getMessage());
-            Map<String, String> error = new HashMap<>();
-            error.put("error", "Registration failed. Please try again.");
-            return ResponseEntity.internalServerError().body(error);
+           return ResponseEntity
+    .status(HttpStatus.BAD_REQUEST)
+    .body(Collections.singletonMap("message", "Email already exists"));
         }
     }
 
