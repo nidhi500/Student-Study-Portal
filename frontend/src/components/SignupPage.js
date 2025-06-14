@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
@@ -97,5 +98,67 @@ if (errorMessage.toLowerCase().includes("email already exists") || errorMessage.
     </div>
   );
 }
+=======
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const SignupPage = () => {
+  const [formData, setFormData] = useState({ username: '', email: '', password: '' });
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:8080/api/auth/register', formData);
+      const token = res.data.token;
+      localStorage.setItem('token', token); // store JWT
+      navigate('/dashboard'); // redirect to dashboard
+    } catch (err) {
+      alert("Signup failed");
+      console.error(err);
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center h-screen bg-gray-50">
+      <form onSubmit={handleSubmit} className="bg-white p-8 rounded shadow-md w-96">
+        <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          className="w-full p-2 mb-4 border rounded"
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          className="w-full p-2 mb-4 border rounded"
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          className="w-full p-2 mb-4 border rounded"
+          onChange={handleChange}
+          required
+        />
+        <button type="submit" className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          Register & Go to Dashboard
+        </button>
+      </form>
+    </div>
+  );
+};
+>>>>>>> Stashed changes
 
 export default SignupPage;

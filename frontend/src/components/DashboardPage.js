@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -70,10 +71,35 @@ export default function DashboardPage() {
 
         </div>
       </main>
+=======
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+function DashboardPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert("You must be logged in to view this page.");
+      navigate('/login');
+    }
+  }, [navigate]);
+
+  return (
+    <div style={styles.container}>
+      <h2>🎉 Welcome to the Dashboard!</h2>
+      <p>You are logged in with a valid JWT.</p>
+      <button onClick={() => {
+        localStorage.removeItem('token');
+        navigate('/');
+      }} style={styles.button}>Logout</button>
+>>>>>>> Stashed changes
     </div>
   );
 }
 
+<<<<<<< Updated upstream
 function Card({ title, desc, link }) {
   return (
     <Link to={link} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-t-4 border-indigo-400 hover:border-indigo-600">
@@ -82,3 +108,24 @@ function Card({ title, desc, link }) {
     </Link>
   );
 }
+=======
+const styles = {
+  container: {
+    padding: '50px',
+    textAlign: 'center',
+    fontFamily: 'Arial',
+  },
+  button: {
+    padding: '10px 20px',
+    marginTop: '20px',
+    fontSize: '16px',
+    backgroundColor: '#f44336',
+    color: 'white',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer',
+  }
+};
+
+export default DashboardPage;
+>>>>>>> Stashed changes
