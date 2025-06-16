@@ -5,36 +5,35 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.studentcompanion.model.User;
 import com.studentcompanion.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000") // Restrict to frontend
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
+    // 🔓 Public or Admin: Get all users
     @GetMapping("/all")
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    @GetMapping("/profile")
-    public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        return userRepository.findByEmail(email);
+    // 🔐 Get profile of currently authenticated user
+@GetMapping("/profile")
+public ResponseEntity<User> getProfile(Authentication authentication) {
+    String email = authentication.getName();
+    User user = userRepository.findByEmail(email);
+    if (user == null) {
+        return ResponseEntity.notFound().build();
     }
+    return ResponseEntity.ok(user);
+}
 
- 
+
 }

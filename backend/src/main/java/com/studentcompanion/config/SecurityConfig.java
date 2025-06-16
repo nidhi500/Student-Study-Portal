@@ -19,8 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.studentcompanion.filter.JwtAuthenticationFilter;
 import com.studentcompanion.service.CustomUserDetailsService;
@@ -36,23 +34,13 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-
-@Configuration
-    public class WebConfig implements WebMvcConfigurer {
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
-            .allowedOrigins("http://localhost:3000")
-            .allowedMethods("GET", "POST", "PUT", "DELETE");
-    }
-}
-
+    // Password Encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-  
 
+    // DAO Auth Provider
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -61,11 +49,13 @@ public class SecurityConfig {
         return authProvider;
     }
 
+    // Auth Manager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
+    // Main Security Filter Chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -74,8 +64,9 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
-                    "/api/auth/**",     // includes /login, /register
-                    "/api/public/**",   // if you have public APIs
+                    "/api/auth/**",           // ✅ Allow login and register
+                    "/api/public/**",         // ✅ Any public endpoint
+                    "/api/todos/**",          // ✅ Your todo APIs
                     "/", "/favicon.ico", "/css/**", "/js/**", "/images/**"
                 ).permitAll()
                 .requestMatchers("/api/users/profile", "/api/users/all").authenticated()
@@ -87,10 +78,11 @@ public class SecurityConfig {
         return http.build();
     }
 
+    // CORS Configuration for localhost:3000
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
