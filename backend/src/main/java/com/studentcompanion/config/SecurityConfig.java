@@ -1,7 +1,7 @@
 package com.studentcompanion.config;
 
-import com.studentcompanion.filter.JwtAuthenticationFilter;
-import com.studentcompanion.service.CustomUserDetailsService;
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
+import com.studentcompanion.filter.JwtAuthenticationFilter;
+import com.studentcompanion.service.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -33,6 +35,17 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+
+@Configuration
+    public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/api/**")
+            .allowedOrigins("http://localhost:3000")
+            .allowedMethods("GET", "POST", "PUT", "DELETE");
+    }
+}
 
     @Bean
     public PasswordEncoder passwordEncoder() {
