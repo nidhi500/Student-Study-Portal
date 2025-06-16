@@ -79,6 +79,8 @@ function Card({ title, desc, link }) {
     <Link to={link} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-t-4 border-indigo-400 hover:border-indigo-600">
       <h3 className="text-xl font-semibold text-indigo-700 mb-2">{title}</h3>
       <p className="text-gray-600 text-sm">{desc}</p>
+      <Link to="/profile" className="text-blue-600 hover:underline">View Profile</Link>
+
     </Link>
   );
 }

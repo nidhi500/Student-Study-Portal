@@ -91,23 +91,36 @@ public class AuthController {
 }
 
         try {
-            User user = new User();
-            user.setName(request.getName());
-            user.setEmail(request.getEmail());
-            user.setPassword(passwordEncoder.encode(request.getPassword()));
+    User user = new User();
+    user.setName(request.getName());
+    user.setEmail(request.getEmail());
+    user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-            User savedUser = userRepository.save(user);
+    // Set additional fields
+    user.setEnrollmentNumber(request.getEnrollmentNumber());
+    user.setBranch(request.getBranch());
+    user.setCurrentSemester(request.getCurrentSemester());
+    user.setGender(request.getGender());
+    user.setGoal(request.getGoal());
+    user.setOtherGoal(request.getOtherGoal());
+    user.setLeetcodeUrl(request.getLeetcodeUrl());
+    user.setGithubUrl(request.getGithubUrl());
+    user.setSkills(request.getSkills());
+    user.setDateOfBirth(request.getDateOfBirth());
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(savedUser.getEmail());
-            String jwt = jwtUtil.generateToken(userDetails);
+    User savedUser = userRepository.save(user);
 
-            return ResponseEntity.ok(new AuthResponse(jwt, savedUser.getName(), savedUser.getEmail()));
-        } catch (Exception e) {
-            System.err.println("Error during registration: " + e.getMessage());
-           return ResponseEntity
-    .status(HttpStatus.BAD_REQUEST)
-    .body(Collections.singletonMap("message", "Email already exists"));
-        }
+    UserDetails userDetails = userDetailsService.loadUserByUsername(savedUser.getEmail());
+    String jwt = jwtUtil.generateToken(userDetails);
+
+    return ResponseEntity.ok(new AuthResponse(jwt, savedUser.getName(), savedUser.getEmail()));
+} catch (Exception e) {
+    System.err.println("Error during registration: " + e.getMessage());
+    return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(Collections.singletonMap("message", "Something went wrong during registration"));
+}
+
     }
 
     // ---------- INPUT VALIDATION ----------

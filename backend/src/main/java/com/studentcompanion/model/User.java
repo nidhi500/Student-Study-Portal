@@ -1,44 +1,41 @@
 package com.studentcompanion.model;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "users")  // optional: table name
+@Table(name = "users") // Use plural to avoid reserved keyword issues
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Core fields
     private String name;
-
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String role = "STUDENT"; // default role
+    private String role = "STUDENT"; // Default role
 
-    @Column(name = "is_active")
-    private boolean isActive = true;
-
-    @Column(name = "email_verified")
-    private boolean emailVerified = false;
-
-    @CreatedDate
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    @LastModifiedDate
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    // Extended fields
+    private String enrollmentNumber;
+    private String branch;
+    private Integer currentSemester;
+    private String gender;
+    private String goal;
+    private String otherGoal;
+    private String leetcodeUrl;
+    private String githubUrl;
+    private String skills;
+    private String profilePictureUrl;
+    private LocalDate dateOfBirth;
 
     // Getters and Setters
+
     public Long getId() {
         return id;
     }
@@ -72,42 +69,98 @@ public class User {
     }
 
     public String getRole() {
-    return role;
+        return role;
     }
 
     public void setRole(String role) {
         this.role = role;
     }
 
-    public boolean isActive() {
-        return isActive;
+    public String getEnrollmentNumber() {
+        return enrollmentNumber;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setEnrollmentNumber(String enrollmentNumber) {
+        this.enrollmentNumber = enrollmentNumber;
     }
 
-    public boolean isEmailVerified() {
-        return emailVerified;
+    public String getBranch() {
+        return branch;
     }
 
-    public void setEmailVerified(boolean emailVerified) {
-        this.emailVerified = emailVerified;
+    public void setBranch(String branch) {
+        this.branch = branch;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public Integer getCurrentSemester() {
+        return currentSemester;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
+    public void setCurrentSemester(Integer currentSemester) {
+        this.currentSemester = currentSemester;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public String getGender() {
+        return gender;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getGoal() {
+        return goal;
+    }
+
+    public void setGoal(String goal) {
+        this.goal = goal;
+    }
+
+    public String getOtherGoal() {
+        return otherGoal;
+    }
+
+    public void setOtherGoal(String otherGoal) {
+        this.otherGoal = otherGoal;
+    }
+
+    public String getLeetcodeUrl() {
+        return leetcodeUrl;
+    }
+
+    public void setLeetcodeUrl(String leetcodeUrl) {
+        this.leetcodeUrl = leetcodeUrl;
+    }
+
+    public String getGithubUrl() {
+        return githubUrl;
+    }
+
+    public void setGithubUrl(String githubUrl) {
+        this.githubUrl = githubUrl;
+    }
+
+    public String getSkills() {
+        return skills;
+    }
+
+    public void setSkills(String skills) {
+        this.skills = skills;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 }
