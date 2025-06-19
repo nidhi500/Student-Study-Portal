@@ -28,6 +28,7 @@ import com.studentcompanion.model.User;
 import com.studentcompanion.repository.UserRepository;
 import com.studentcompanion.service.CustomUserDetailsService;
 import com.studentcompanion.util.JwtUtil;
+import com.studentcompanion.model.Role;
 
 
 
@@ -70,8 +71,14 @@ public class AuthController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
         User user = userRepository.findByEmail(authRequest.getEmail());
+        return ResponseEntity.ok(new AuthResponse(
+    jwt,
+    user.getName(),
+    user.getEmail(),
+    user.getBranch(),
+    user.getCurrentSemester()
+));
 
-        return ResponseEntity.ok(new AuthResponse(jwt, user.getName(), user.getEmail()));
     }
 
     // ---------- REGISTER ----------
@@ -107,13 +114,21 @@ public class AuthController {
     user.setGithubUrl(request.getGithubUrl());
     user.setSkills(request.getSkills());
     user.setDateOfBirth(request.getDateOfBirth());
+    user.setRole(Role.STUDENT);
 
     User savedUser = userRepository.save(user);
 
     UserDetails userDetails = userDetailsService.loadUserByUsername(savedUser.getEmail());
     String jwt = jwtUtil.generateToken(userDetails);
 
-    return ResponseEntity.ok(new AuthResponse(jwt, savedUser.getName(), savedUser.getEmail()));
+    return ResponseEntity.ok(new AuthResponse(
+    jwt,
+    user.getName(),
+    user.getEmail(),
+    user.getBranch(),
+    user.getCurrentSemester()
+));
+
 } catch (Exception e) {
     System.err.println("Error during registration: " + e.getMessage());
     return ResponseEntity

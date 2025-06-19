@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from './authStore';
 
 export default function DashboardPage() {
-  const user = JSON.parse(localStorage.getItem("user")) || {};
-  const goal = localStorage.getItem("goal") || "Not Set";
+  const user = useAuthStore((state) => state.user) || {};
+  const goal = user.goal || "Not Set";
+  const logout = useAuthStore((state) => state.logout);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-100 to-blue-100">
@@ -11,8 +13,16 @@ export default function DashboardPage() {
       {/* Navbar */}
       <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
         <h1 className="text-xl font-bold text-indigo-700">Student Companion</h1>
-        <div className="text-gray-700 font-medium">
-          Welcome, <span className="text-indigo-700 font-semibold">{user.name || "Student"}</span>
+        <div className="flex items-center gap-4 text-gray-700 font-medium">
+          <span>
+            Welcome, <span className="text-indigo-700 font-semibold">{user.name || "Student"}</span>
+          </span>
+          <button
+            onClick={logout}
+            className="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 transition"
+          >
+            Logout
+          </button>
         </div>
       </nav>
 
@@ -30,7 +40,7 @@ export default function DashboardPage() {
           <Card
             title="📚 Study Resources"
             desc="Get access to semester-wise notes, videos, and PDFs."
-            link="/resources"
+            link={`/subjects/${user.currentSemester}?branch=${user.branch}`}
           />
 
           {/* Goal Dashboard */}
@@ -78,9 +88,8 @@ function Card({ title, desc, link }) {
   return (
     <Link to={link} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition border-t-4 border-indigo-400 hover:border-indigo-600">
       <h3 className="text-xl font-semibold text-indigo-700 mb-2">{title}</h3>
-      <p className="text-gray-600 text-sm">{desc}</p>
-      <Link to="/profile" className="text-blue-600 hover:underline">View Profile</Link>
-
+      <p className="text-gray-600 text-sm mb-1">{desc}</p>
+      <span className="text-blue-600 hover:underline text-sm">Explore</span>
     </Link>
   );
 }

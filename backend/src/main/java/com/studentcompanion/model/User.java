@@ -2,40 +2,61 @@ package com.studentcompanion.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "users") // Use plural to avoid reserved keyword issues
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Core fields
     private String name;
-    @Column(unique = true, nullable = false)
+
+    @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    private String role = "STUDENT"; // Default role
+    private boolean isActive = true;
 
-    // Extended fields
-    private String enrollmentNumber;
+    private boolean emailVerified = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.STUDENT; // Default role
+
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
     private String branch;
+
+    @ManyToOne
+    @JoinColumn(name = "semester_id")
+    private Semester semester;
+
+    private String enrollmentNumber;
+
     private Integer currentSemester;
+
     private String gender;
+
     private String goal;
+
     private String otherGoal;
+
     private String leetcodeUrl;
+
     private String githubUrl;
+
     private String skills;
-    private String profilePictureUrl;
+
     private LocalDate dateOfBirth;
 
     // Getters and Setters
-
     public Long getId() {
         return id;
     }
@@ -68,20 +89,43 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
-
-    public String getEnrollmentNumber() {
-        return enrollmentNumber;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setEnrollmentNumber(String enrollmentNumber) {
-        this.enrollmentNumber = enrollmentNumber;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public String getBranch() {
@@ -90,6 +134,22 @@ public class User {
 
     public void setBranch(String branch) {
         this.branch = branch;
+    }
+
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
+    }
+
+    public String getEnrollmentNumber() {
+        return enrollmentNumber;
+    }
+
+    public void setEnrollmentNumber(String enrollmentNumber) {
+        this.enrollmentNumber = enrollmentNumber;
     }
 
     public Integer getCurrentSemester() {
@@ -146,14 +206,6 @@ public class User {
 
     public void setSkills(String skills) {
         this.skills = skills;
-    }
-
-    public String getProfilePictureUrl() {
-        return profilePictureUrl;
-    }
-
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
     }
 
     public LocalDate getDateOfBirth() {

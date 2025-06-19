@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "./authStore";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -18,11 +19,16 @@ export default function LoginPage() {
         password,
       });
 
+      const user = {
+        name: response.data.name,
+        email: response.data.email,
+        branch: response.data.branch,
+        currentSemester: response.data.currentSemester,
+      };
+
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({ name: response.data.name, email: response.data.email })
-      );
+      localStorage.setItem("user", JSON.stringify(user));
+      useAuthStore.getState().setUser(user);
 
       navigate("/dashboard");
     } catch (err) {
@@ -38,7 +44,9 @@ export default function LoginPage() {
           Welcome Back
         </h2>
 
-        {error && <div className="text-red-600 text-sm mb-4 text-center">{error}</div>}
+        {error && (
+          <div className="text-red-600 text-sm mb-4 text-center">{error}</div>
+        )}
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div>
