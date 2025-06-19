@@ -4,17 +4,23 @@ import com.studentcompanion.model.Contribution;
 import com.studentcompanion.model.User;
 import com.studentcompanion.repository.ContributionRepository;
 import com.studentcompanion.repository.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/contributions")
 @CrossOrigin(origins = "*")
-public class ContributionController {
+public class ContributionController{
+@Autowired
+private ContributionRepository contributionRepository;
 
 @Autowired
 private UserRepository userRepository;
