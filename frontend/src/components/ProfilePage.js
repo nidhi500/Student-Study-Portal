@@ -7,6 +7,10 @@ import DashboardSummary from './DashboardSummary';
 import RemindersPanel from './RemindersPanel';
 import ThemeToggle from './ThemeToggle'; // ✅ import the toggle
 import TodoList from './TodoList';
+import axios from "axios";
+import UserContributions from '../components/UserContributions';
+
+
 
 
 function ProfilePage() {
@@ -47,7 +51,8 @@ function ProfilePage() {
         />
         <RemindersPanel />
          <TodoList />   
-       
+       <RemindersPanel />
+<UserContributions />
       </main>
   
     </div>

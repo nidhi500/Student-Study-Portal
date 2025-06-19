@@ -8,7 +8,7 @@ import './utils/axiosConfig';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProfilePage from "./components/ProfilePage";
 import { ThemeProvider } from "./context/ThemeContext";
-
+import ContributePage from './pages/ContributePage';
 
 <ThemeProvider>
   <App />
@@ -23,6 +23,8 @@ function App() {
         <Route path="/signup" element={<SignupPage />} /> {/* ✅ New */}
         <Route path="/login" element={<LoginPage />} /> {/* ✅ Add this */}
         <Route path="/profile" element={<ProfilePage />} />
+        
+<Route path="/contribute" element={<ContributePage />} />
 <Route path="/dashboard" element={
   <ProtectedRoute>
     <DashboardPage />

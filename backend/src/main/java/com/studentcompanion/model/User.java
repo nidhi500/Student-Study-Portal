@@ -2,6 +2,12 @@ package com.studentcompanion.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List; // ✅ Add this for List to work
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 
 @Entity
 @Table(name = "users") // Use plural to avoid reserved keyword issues
@@ -163,4 +169,7 @@ public class User {
     public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+@JsonIgnore
+private List<Contribution> contributions = new ArrayList<>();
 }

@@ -20,6 +20,10 @@ export default function Sidebar({ user }) {
           <NavItem icon={<ClipboardList size={18} />} label="Study Plan" to="/goals" />
           <NavItem icon={<Calendar size={18} />} label="Timetable" to="/calendar" />
           <NavItem icon={<BookOpen size={18} />} label="Resources" to="/resources" />
+          <Link to="/contribute" className="...">
+  Contribute
+</Link>
+
         </nav>
       </div>
 
@@ -44,5 +48,6 @@ function NavItem({ icon, label, to }) {
       {icon}
       <span className="text-sm font-medium">{label}</span>
     </Link>
+    
   );
 }

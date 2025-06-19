@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:8080",
-
   "dependencies": {
     "@fullcalendar/bootstrap5": "^6.1.17",
     "@fullcalendar/core": "^6.1.17",
@@ -21,6 +20,7 @@
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.6.2",
     "react-scripts": "5.0.1",
+    "shadcn-ui": "^0.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -53,5 +53,4 @@
     "postcss": "^8.5.5",
     "tailwindcss": "^3.4.17"
   }
-  
 }
