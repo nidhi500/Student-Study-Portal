@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuthStore } from "./authStore"; // ✅ make sure this is imported
 
 function SignupPage() {
   const [formData, setFormData] = useState({
@@ -34,55 +35,63 @@ function SignupPage() {
   };
 
   const handleSignup = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  const requestBody = {
-    name: formData.name,
-    email: formData.email,
-    password: formData.password,
-    enrollmentNumber: formData.enrollment,
-    branch: formData.branch,
-    currentSemester: parseInt(formData.semester),
-    dateOfBirth: formData.dob,
-    gender: formData.gender,
-    goal: formData.goal,
-    otherGoal: formData.otherGoal,
-    leetcodeUrl: formData.leetcode,
-    githubUrl: formData.github,
-    skills: formData.skills,
-    profilePictureUrl: null // You can handle file upload separately later
+    const requestBody = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      enrollmentNumber: formData.enrollment,
+      branch: formData.branch,
+      currentSemester: parseInt(formData.semester),
+      dateOfBirth: formData.dob,
+      gender: formData.gender,
+      goal: formData.goal,
+      otherGoal: formData.otherGoal,
+      leetcodeUrl: formData.leetcode,
+      githubUrl: formData.github,
+      skills: formData.skills,
+      profilePictureUrl: null
+    };
+
+    try {
+      const res = await axios.post("http://localhost:8080/api/auth/register", requestBody, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      // ✅ Updated: full user object and auth store
+      const { token, name, email } = res.data;
+      const user = {
+        name,
+        email,
+        branch: formData.branch,
+        currentSemester: parseInt(formData.semester)
+      };
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      useAuthStore.getState().setUser(user); // ✅ Zustand update
+
+      navigate("/dashboard");
+    } catch (err) {
+      console.log("Full error response:", err.response?.data);
+      const errorMessage = err.response?.data?.message || err.response?.data?.error || "Signup failed";
+
+      if (errorMessage.toLowerCase().includes("email already exists")) {
+        setError("Email already exists. Redirecting to login...");
+        setTimeout(() => navigate("/login"), 2500);
+      } else {
+        setError("Signup failed: " + errorMessage);
+      }
+      setLoading(false);
+    }
   };
 
-  try {
-    const res = await axios.post("http://localhost:8080/api/auth/register", requestBody, {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
-
-    const { token, name, email } = res.data;
-    localStorage.setItem("token", token);
-    localStorage.setItem("name", name);
-    localStorage.setItem("email", email);
-
-    navigate("/dashboard");
-  } catch (err) {
-    console.log("Full error response:", err.response?.data);
-    const errorMessage = err.response?.data?.message || err.response?.data?.error || "Signup failed";
-
-    if (errorMessage.toLowerCase().includes("email already exists")) {
-      setError("Email already exists. Redirecting to login...");
-      setTimeout(() => navigate("/login"), 2500);
-    } else {
-      setError("Signup failed: " + errorMessage);
-    }
-    setLoading(false);
-  }
-};
-
-
+  // 👇 The rest of your JSX remains 100% unchanged — as requested
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-indigo-200">
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-xl">
@@ -134,8 +143,6 @@ function SignupPage() {
               <input type="text" name="skills" placeholder="Skills (comma separated)" value={formData.skills} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
             </>
           )}
-
-         
 
           <button type="submit" disabled={loading} className={`w-full ${loading ? "bg-gray-400" : "bg-indigo-600 hover:bg-indigo-700"} text-white py-2 rounded-lg transition`}>
             {loading ? "Registering..." : "Sign Up"}
