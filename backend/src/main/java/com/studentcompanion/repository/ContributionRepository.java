@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface ContributionRepository extends JpaRepository<Contribution, Long> {
-    List<Contribution> findByUser(User user);  // 🔍 Fetch contributions for a specific user
+List<Contribution> findByUser(User user);
 }

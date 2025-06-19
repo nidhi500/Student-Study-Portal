@@ -16,37 +16,80 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ContributionController {
 
-    @Autowired
-    private ContributionRepository contributionRepository;
+@Autowired
+private UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+private final String uploadDir = "uploads/";
 
-    // ✅ Add a new contribution for the currently authenticated user
-    @PostMapping("/add")
-    public ResponseEntity<Contribution> addContribution(@RequestBody Contribution contribution, Authentication authentication) {
-        String email = authentication.getName();  // This comes from the JWT or session
+@PostMapping(value = "/add", consumes = "multipart/form-data")
+public ResponseEntity<?> addContribution(
+        @RequestParam("title") String title,
+        @RequestParam("description") String description,
+        @RequestParam("type") String type,
+        @RequestParam("subject") String subject,
+        @RequestParam("visibility") String visibility,
+        @RequestParam(value = "url", required = false) String url,
+        @RequestParam(value = "file", required = false) MultipartFile file,
+        Authentication authentication
+) {
+    try {
+        System.out.println("📥 Title: " + title);
+        System.out.println("📥 File: " + (file != null ? file.getOriginalFilename() : "null"));
+
+        String email = (authentication != null) ? authentication.getName() : "test@example.com";
         User user = userRepository.findByEmail(email);
-
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new RuntimeException("User not found for email: " + email);
         }
 
-        contribution.setUser(user);  // Link contribution to user
+        Contribution contribution = new Contribution();
+        contribution.setTitle(title);
+        contribution.setDescription(description);
+        contribution.setType(type);
+        contribution.setSubject(subject);
+        contribution.setVisibility(visibility);
+        contribution.setUser(user);
+        contribution.setCreatedAt(LocalDateTime.now());
+
+        // File upload handling
+        if (file != null && !file.isEmpty()) {
+            File folder = new File(uploadDir);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+
+            String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            File destination = new File(folder, filename);
+            file.transferTo(destination);
+            contribution.setFilePath(destination.getPath());
+
+            System.out.println("✅ File saved at: " + destination.getPath());
+        } else if (url != null && !url.isEmpty()) {
+            contribution.setUrl(url);
+        }
+
         Contribution saved = contributionRepository.save(contribution);
         return ResponseEntity.ok(saved);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.internalServerError().body("❌ Error: " + e.getMessage());
     }
+}
 
-    // ✅ Fetch all contributions for the currently authenticated user
-    @GetMapping("/my")
-    public List<Contribution> getUserContributions(Authentication authentication) {
-        String email = authentication.getName();
+@GetMapping("/my")
+public ResponseEntity<?> getUserContributions(Authentication authentication) {
+    try {
+        String email = (authentication != null) ? authentication.getName() : "test@example.com";
         User user = userRepository.findByEmail(email);
-
         if (user == null) {
-            throw new RuntimeException("User not found");
+            return ResponseEntity.badRequest().body("User not found");
         }
 
-        return contributionRepository.findByUser(user);
+        List<Contribution> list = contributionRepository.findByUser(user);
+        return ResponseEntity.ok(list);
+    } catch (Exception e) {
+        return ResponseEntity.internalServerError().body("❌ Failed to fetch contributions: " + e.getMessage());
     }
+}
 }

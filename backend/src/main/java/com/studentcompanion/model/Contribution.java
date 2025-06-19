@@ -11,63 +11,59 @@ public class Contribution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-    private String type; // e.g., Notes, Resource, etc.
-    private String description;
+private String title;
+private String description;
+private String type; // Notes, Video, Link, Drive
+private String subject;
+private String url;
+private String visibility;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
+private String filePath;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+private LocalDateTime createdAt = LocalDateTime.now();
 
-    // Getters & Setters
+@ManyToOne(fetch = FetchType.LAZY)
+@JoinColumn(name = "user_id")
+private User user;
 
-    public Long getId() {
-        return id;
-    }
+// Getters & Setters...
+public Long getId() { return id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+public void setId(Long id) { this.id = id; }
 
-    public String getTitle() {
-        return title;
-    }
+public String getTitle() { return title; }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+public void setTitle(String title) { this.title = title; }
 
-    public String getType() {
-        return type;
-    }
+public String getDescription() { return description; }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+public void setDescription(String description) { this.description = description; }
 
-    public String getDescription() {
-        return description;
-    }
+public String getType() { return type; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+public void setType(String type) { this.type = type; }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+public String getSubject() { return subject; }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+public void setSubject(String subject) { this.subject = subject; }
 
-    public User getUser() {
-        return user;
-    }
+public void setFilePath(String filePath) {
+this.filePath = filePath;
+}
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+public String getUrl() { return url; }
+
+public void setUrl(String url) { this.url = url; }
+
+public String getVisibility() { return visibility; }
+
+public void setVisibility(String visibility) { this.visibility = visibility; }
+
+public LocalDateTime getCreatedAt() { return createdAt; }
+
+public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+public User getUser() { return user; }
+
+public void setUser(User user) { this.user = user; }
 }
