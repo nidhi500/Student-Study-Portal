@@ -8,6 +8,7 @@ import DashboardPage from './components/DashboardPage';
 import ProfilePage from './components/ProfilePage';
 import SubjectsPage from './components/SubjectsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import UnitPage from './components/UnitPage';
 import { ThemeProvider } from "./context/ThemeContext";
 import './utils/axiosConfig'; // ensure Axios config loads
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/subjects/:subjectId/units" element={<UnitPage />} />
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <DashboardPage />

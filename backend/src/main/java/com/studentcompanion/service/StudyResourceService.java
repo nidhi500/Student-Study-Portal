@@ -26,7 +26,7 @@ public class StudyResourceService {
     private PyqRepository pyqRepository;
 
     @Autowired
-    private CommentRepository commentRepository;
+    private PyqCommentRepository commentRepository;
 
     // STUDENT: Fetch Methods
 
@@ -53,13 +53,13 @@ public class StudyResourceService {
         return pyqRepository.findByUnitId(unitId);
     }
 
-    public List<Comment> getCommentsByPyq(Long pyqId) {
+    public List<PyqComment> getCommentsByPyq(Long pyqId) {
         return commentRepository.findByPyqId(pyqId);
     }
 
-    public Comment addCommentToPyq(Long pyqId, User user, String commentText) {
+    public PyqComment addCommentToPyq(Long pyqId, User user, String commentText) {
         Pyq pyq = pyqRepository.findById(pyqId).orElseThrow();
-        Comment comment = new Comment();
+        PyqComment comment = new PyqComment();
         comment.setPyq(pyq);
         comment.setUser(user);
         comment.setCommentText(commentText);

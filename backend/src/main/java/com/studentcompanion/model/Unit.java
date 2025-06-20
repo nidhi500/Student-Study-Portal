@@ -3,6 +3,7 @@ package com.studentcompanion.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "units")
 public class Unit {
 
     @Id

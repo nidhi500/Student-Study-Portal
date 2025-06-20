@@ -3,8 +3,11 @@ package com.studentcompanion.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 @Entity
-public class Comment {
+@Table(name = "pyq_comment")
+public class PyqComment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +23,9 @@ public class Comment {
 
     private String commentText;
 
+    @CreationTimestamp
     private LocalDateTime timestamp;
+
 
     // Getters and Setters
     public Long getId() {
