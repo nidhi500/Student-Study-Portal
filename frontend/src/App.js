@@ -10,6 +10,7 @@ import SubjectsPage from './components/SubjectsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ThemeProvider } from "./context/ThemeContext";
 import './utils/axiosConfig'; // ensure Axios config loads
+import ContributePage from './pages/ContributePage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/subjects/:semesterId" element={<SubjectsPage />} />
+          <Route path="/contribute" element={<ContributePage />} />
         </Routes>
       </Router>
     </ThemeProvider>

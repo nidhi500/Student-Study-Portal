@@ -66,10 +66,10 @@ public class StudyResourceController {
         return studyService.getCommentsByPyq(id);
     }
 
-    @PostMapping("/pyqs/{id}/comments")
-    public Comment postComment(@PathVariable Long id, @RequestBody Comment comment, @AuthenticationPrincipal User user) {
-        return studyService.addCommentToPyq(id, user, comment.getCommentText());
-    }
+    // @PostMapping("/pyqs/{id}/comments")
+    // public Comment postComment(@PathVariable Long id, @RequestBody Comment comment, @AuthenticationPrincipal User user) {
+    //     return studyService.addCommentToPyq(id, user, comment.getCommentsByPyq());
+    // }
 
     // 🛡️ ADMIN ONLY: Add Semesters, Subjects, Units, Resources
 

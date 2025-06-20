@@ -1,143 +1,135 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-export default function ContributePage() {
-const [formData, setFormData] = useState({
-title: '',
-description: '',
-type: 'Notes', // Notes, Video, Link, Drive
-subject: '',
-url: '',
-file: null, // For file uploads
-visibility: 'Public', // Public, ECE, Goal
-});
-
-const [message, setMessage] = useState('');
-
-const handleChange = (e) => {
-const { name, value, files } = e.target;
-if (name === 'file') {
-setFormData((prev) => ({ ...prev, file: files[0] }));
-} else {
-setFormData((prev) => ({ ...prev, [name]: value }));
+function isValidDriveUrl(url) {
+  const pattern = /^https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]{10,})/;
+  return pattern.test(url);
 }
-};
 
-const handleSubmit = async (e) => {
-e.preventDefault();
- console.log("Submitting...");
+function extractFileId(url) {
+  const match = url.match(/(?:file\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+  return match ? match[1] : null;
+}
 
-try {
-  const data = new FormData();
-  data.append('title', formData.title);
-  data.append('description', formData.description);
-  data.append('type', formData.type);
-  data.append('subject', formData.subject);
-  data.append('visibility', formData.visibility);
-
-  if (formData.file) {
-    data.append('file', formData.file);
-  } else {
-    data.append('url', formData.url);
-  }
-
-  await axios.post('http://localhost:8080/api/contributions/add', data, {
-    withCredentials: true,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-
-  setMessage('✅ Contribution submitted successfully!');
-  setFormData({
+const ContributePage = () => {
+  const [formData, setFormData] = useState({
     title: '',
     description: '',
-    type: 'Notes',
+    type: '',
     subject: '',
+    visibility: '',
     url: '',
-    file: null,
-    visibility: 'Public',
   });
-} catch (error) {
-  console.error('❌ Submission failed:', error);
-  setMessage('❌ Failed to submit contribution.');
-}
+  const [contributions, setContributions] = useState([]);
+  const [comments, setComments] = useState({});
+
+  const fetchContributions = async () => {
+    const res = await axios.get('http://localhost:8080/api/contributions/my');
+    setContributions(res.data);
+  };
+
+  useEffect(() => {
+    fetchContributions();
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isValidDriveUrl(formData.url)) {
+      alert('❌ Please enter a valid Google Drive link.');
+      return;
+    }
+
+    try {
+      const res = await axios.post('http://localhost:8080/api/contributions/add', formData);
+      alert('✅ Contribution submitted');
+      setFormData({ title: '', description: '', type: '', subject: '', visibility: '', url: '' });
+      fetchContributions();
+    } catch (err) {
+      console.error(err);
+      alert('❌ Failed to submit contribution');
+    }
+  };
+
+  const isValidDriveUrl = (url) => {
+    const pattern = /^https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]{10,})/;
+    return pattern.test(url);
+  };
+
+  const extractFileId = (url) => {
+    const match = url.match(/(?:file\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
+    return match ? match[1] : null;
+  };
+
+  const handleCommentChange = (id, value) => {
+    setComments((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleCopyLink = (url) => {
+    navigator.clipboard.writeText(url);
+    alert('📋 Link copied!');
+  };
+
+  return (
+    <div className="p-6 max-w-3xl mx-auto">
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-lg space-y-4">
+        <h2 className="text-xl font-semibold">📤 Contribute Resource</h2>
+        <input className="w-full p-2 border rounded" name="title" placeholder="Title" value={formData.title} onChange={handleChange} required />
+        <textarea className="w-full p-2 border rounded" name="description" placeholder="Description" value={formData.description} onChange={handleChange} required />
+        <input className="w-full p-2 border rounded" name="type" placeholder="Type (e.g. Notes, Video)" value={formData.type} onChange={handleChange} required />
+        <input className="w-full p-2 border rounded" name="subject" placeholder="Subject" value={formData.subject} onChange={handleChange} required />
+        <select className="w-full p-2 border rounded" name="visibility" value={formData.visibility} onChange={handleChange} required>
+          <option value="">Select Visibility</option>
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+        </select>
+        <input className="w-full p-2 border rounded" type="url" name="url" placeholder="Google Drive Link" value={formData.url} onChange={handleChange} required />
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Submit</button>
+      </form>
+
+      {/* Contributions List */}
+      <div className="mt-8 space-y-6">
+        <h3 className="text-lg font-semibold">🧾 Your Contributions</h3>
+        {contributions.map((item) => (
+          <div key={item.id} className="bg-white rounded-xl shadow-md p-4 space-y-2">
+            <h4 className="text-lg font-bold">{item.title}</h4>
+            <p className="text-sm text-gray-600">{item.description}</p>
+            <iframe
+              className="w-full h-52 rounded border"
+              src={`https://drive.google.com/file/d/${extractFileId(item.url)}/preview`}
+              allow="autoplay"
+              title={item.title}
+            ></iframe>
+
+            {/* Buttons */}
+            <div className="flex gap-4 mt-2 text-sm">
+              <button className="text-green-600 hover:underline">⬆️ Upvote</button>
+              <button className="text-red-600 hover:underline">⬇️ Downvote</button>
+              <button className="text-pink-600 hover:underline">❤️ Favorite</button>
+              <button className="text-yellow-600 hover:underline">🔖 Bookmark</button>
+              <button onClick={() => handleCopyLink(item.url)} className="text-blue-600 hover:underline">🔗 Share</button>
+              <button className="text-gray-600 hover:underline">🚫 Report</button>
+            </div>
+
+            {/* Comments */}
+            <div className="mt-3">
+              <textarea
+                rows="2"
+                className="w-full border p-2 rounded text-sm"
+                placeholder="Add a comment..."
+                value={comments[item.id] || ''}
+                onChange={(e) => handleCommentChange(item.id, e.target.value)}
+              />
+              <button className="mt-1 bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 text-sm">Post Comment</button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
-return (
-<div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-lg mt-6 dark:bg-gray-900 dark:text-white">
-<h2 className="text-2xl font-semibold mb-4">📤 Contribute a Resource</h2>
-<form onSubmit={handleSubmit} className="space-y-4">
-  {/* Title */}
-  <div>
-    <label className="block text-sm font-medium mb-1">Title</label>
-    <input type="text" name="title" value={formData.title} onChange={handleChange}
-      className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-800" required />
-  </div>
-
-  {/* Description */}
-  <div>
-    <label className="block text-sm font-medium mb-1">Description</label>
-    <textarea name="description" value={formData.description} onChange={handleChange}
-      className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-800" rows="3" required />
-  </div>
-
-  {/* Type */}
-  <div>
-    <label className="block text-sm font-medium mb-1">Resource Type</label>
-    <select name="type" value={formData.type} onChange={handleChange}
-      className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-800">
-      <option value="Notes">Notes</option>
-      <option value="Video">Video</option>
-      <option value="Link">Link</option>
-      <option value="Drive">Drive Link</option>
-    </select>
-  </div>
-
-  {/* Subject */}
-  <div>
-    <label className="block text-sm font-medium mb-1">Subject</label>
-    <input type="text" name="subject" value={formData.subject} onChange={handleChange}
-      placeholder="e.g., Digital Electronics"
-      className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-800" required />
-  </div>
-
-  {/* Upload or URL Input */}
-  {formData.type === 'Drive' || formData.type === 'Link' ? (
-    <div>
-      <label className="block text-sm font-medium mb-1">Resource URL</label>
-      <input type="url" name="url" value={formData.url} onChange={handleChange}
-        className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-800" required />
-    </div>
-  ) : (
-    <div>
-      <label className="block text-sm font-medium mb-1">Upload File</label>
-      <input type="file" name="file" onChange={handleChange}
-        accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.zip,.png,.jpg,.jpeg"
-        className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-800" />
-    </div>
-  )}
-
-  {/* Visibility */}
-  <div>
-    <label className="block text-sm font-medium mb-1">Visibility</label>
-    <select name="visibility" value={formData.visibility} onChange={handleChange}
-      className="w-full p-2 border rounded bg-gray-50 dark:bg-gray-800">
-      <option value="Public">Public</option>
-      <option value="ECE">ECE Only</option>
-      <option value="Goal">Goal Based</option>
-    </select>
-  </div>
-
-  <br />
-  <button type="submit"
-    className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
-    Submit
-  </button>
-
-  {message && <p className="mt-2 text-sm">{message}</p>}
-</form>
-
-</div>
-);
-}
+export default ContributePage;

@@ -57,15 +57,15 @@ public class StudyResourceService {
         return commentRepository.findByPyqId(pyqId);
     }
 
-    public Comment addCommentToPyq(Long pyqId, User user, String commentText) {
-        Pyq pyq = pyqRepository.findById(pyqId).orElseThrow();
-        Comment comment = new Comment();
-        comment.setPyq(pyq);
-        comment.setUser(user);
-        comment.setCommentText(commentText);
-        comment.setTimestamp(java.time.LocalDateTime.now());
-        return commentRepository.save(comment);
-    }
+    // public Comment addCommentToPyq(Long pyqId, User user, String commentText) {
+    //     Pyq pyq = pyqRepository.findById(pyqId).orElseThrow();
+    //     Comment comment = new Comment();
+    //     comment.setPyq(pyq);
+    //     comment.setUser(user);
+    //     comment.setCommentText(commentText);
+    //     comment.setTimestamp(java.time.LocalDateTime.now());
+    //     return commentRepository.save(comment);
+    // }
 
     // ADMIN: Create Methods
 
