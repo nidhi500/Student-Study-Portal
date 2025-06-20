@@ -3,6 +3,7 @@ package com.studentcompanion.model;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "resources")
 public class Resource {
 
     @Id

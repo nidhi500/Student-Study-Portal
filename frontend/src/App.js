@@ -8,9 +8,15 @@ import DashboardPage from './components/DashboardPage';
 import ProfilePage from './components/ProfilePage';
 import SubjectsPage from './components/SubjectsPage';
 import ProtectedRoute from './components/ProtectedRoute';
+
 import { ThemeProvider } from "./context/ThemeContext";
 import './utils/axiosConfig'; // ensure Axios config loads
 import ContributePage from './pages/ContributePage';
+
+import UnitPage from './components/UnitPage';
+import { ThemeProvider } from "./context/ThemeContext";
+import './utils/axiosConfig'; // ensure Axios config loads
+
 
 function App() {
   return (
@@ -21,13 +27,18 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+
+          <Route path="/subjects/:subjectId/units" element={<UnitPage />} />
+
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <DashboardPage />
             </ProtectedRoute>
           } />
           <Route path="/subjects/:semesterId" element={<SubjectsPage />} />
+
           <Route path="/contribute" element={<ContributePage />} />
+
         </Routes>
       </Router>
     </ThemeProvider>

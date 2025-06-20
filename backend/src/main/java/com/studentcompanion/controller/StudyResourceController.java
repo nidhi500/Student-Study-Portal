@@ -4,11 +4,19 @@ import com.studentcompanion.model.*;
 import com.studentcompanion.repository.UnitRepository;
 import com.studentcompanion.service.StudyResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import org.springframework.web.server.ResponseStatusException;
+import com.studentcompanion.repository.PyqRepository;
+import com.studentcompanion.repository.PyqCommentRepository;
+
 import com.studentcompanion.dto.StudyResourceResponse;
 
 
@@ -16,8 +24,12 @@ import java.io.File;
 import java.util.List;
 import java.io.IOException;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:3000")
+
 public class StudyResourceController {
 
     @Autowired
@@ -26,6 +38,12 @@ public class StudyResourceController {
     // 👨‍🎓 STUDENT: Fetch Semesters, Subjects, Units, Resources, PYQs, Comments
     @Autowired
     private UnitRepository unitRepository;
+
+    @Autowired
+    private PyqRepository pyqRepository;
+
+    @Autowired
+    private PyqCommentRepository pyqCommentRepository;
 
     @GetMapping("/semesters")
     public List<Semester> getSemesters() {
@@ -36,7 +54,6 @@ public class StudyResourceController {
     public List<Subject> getSubjects(@PathVariable int semester, @RequestParam String branch) {
         return studyService.getSubjectsBySemesterAndBranch(semester, branch);
     }
-
 
 
     @GetMapping("/subjects/{id}/units")
@@ -62,16 +79,37 @@ public class StudyResourceController {
     }
 
     @GetMapping("/pyqs/{id}/comments")
+
     public List<Comment> getComments(@PathVariable Long id) {
         return studyService.getCommentsByPyq(id);
     }
 
-    // @PostMapping("/pyqs/{id}/comments")
-    // public Comment postComment(@PathVariable Long id, @RequestBody Comment comment, @AuthenticationPrincipal User user) {
-    //     return studyService.addCommentToPyq(id, user, comment.getCommentsByPyq());
-    // }
+    
+    public List<PyqComment> getComments(@PathVariable Long id) {
+        return studyService.getCommentsByPyq(id);
+    }
 
-    // 🛡️ ADMIN ONLY: Add Semesters, Subjects, Units, Resources
+    @PostMapping("/api/pyqs/{pyqId}/comments")
+    public ResponseEntity<PyqComment> addComment(
+        @PathVariable Long pyqId,
+        @RequestBody Map<String, String> body,
+        @AuthenticationPrincipal User user // Assuming Spring Security passes current user
+    ) {
+        String text = body.get("commentText");
+
+        Pyq pyq = pyqRepository.findById(pyqId)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "PYQ not found"));
+
+        PyqComment comment = new PyqComment();
+        comment.setCommentText(text);
+        comment.setUser(user);
+        comment.setPyq(pyq);
+
+        PyqComment saved = pyqCommentRepository.save(comment);
+        return ResponseEntity.ok(saved);
+    }
+
+
 
     @PostMapping("/admin/semesters")
     @PreAuthorize("hasAuthority('ADMIN')")

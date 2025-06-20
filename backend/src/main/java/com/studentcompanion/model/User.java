@@ -3,6 +3,7 @@ package com.studentcompanion.model;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+
 import java.util.List;
 
 @Entity
@@ -21,10 +22,12 @@ public class User {
     private String password;
 
     private boolean isActive = true;
+
     private boolean emailVerified = false;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+
     private Role role = Role.STUDENT;
 
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -32,18 +35,48 @@ public class User {
 
     private String branch;
     private String enrollmentNumber;
+
+    private Role role = Role.STUDENT; // Default role
+
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    private String branch;
+
+    @ManyToOne
+    @JoinColumn(name = "semester_id")
+    private Semester semester;
+
+    private String enrollmentNumber;
+
     private Integer currentSemester;
+
     private String gender;
+
     private String goal;
+
     private String otherGoal;
+
     private String leetcodeUrl;
+
     private String githubUrl;
+
     private String skills;
+
     private LocalDate dateOfBirth;
 
     @ManyToOne
     @JoinColumn(name = "semester_id")
     private Semester semester;
+
+    private LocalDate dateOfBirth;
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Contribution> contributions;
@@ -58,14 +91,95 @@ public class User {
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
+
     public boolean isActive() { return isActive; }
     public void setActive(boolean active) { isActive = active; }
+
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
+    }
+
+    public String getEnrollmentNumber() {
+        return enrollmentNumber;
+    }
+
+    public void setEnrollmentNumber(String enrollmentNumber) {
+        this.enrollmentNumber = enrollmentNumber;
+    }
+
+    public Integer getCurrentSemester() {
+        return currentSemester;
+    }
 
     public boolean isEmailVerified() { return emailVerified; }
     public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
@@ -114,6 +228,10 @@ public class User {
 
     public List<Contribution> getContributions() { return contributions; }
     public void setContributions(List<Contribution> contributions) { this.contributions = contributions; }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
 
     public List<Comment> getComments() { return comments; }
     public void setComments(List<Comment> comments) { this.comments = comments; }

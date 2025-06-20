@@ -26,7 +26,11 @@ public class StudyResourceService {
     private PyqRepository pyqRepository;
 
     @Autowired
+
     private CommentRepository commentRepository;
+
+    private PyqCommentRepository commentRepository;
+
 
     // STUDENT: Fetch Methods
 
@@ -66,6 +70,21 @@ public class StudyResourceService {
     //     comment.setTimestamp(java.time.LocalDateTime.now());
     //     return commentRepository.save(comment);
     // }
+
+    public List<PyqComment> getCommentsByPyq(Long pyqId) {
+        return commentRepository.findByPyqId(pyqId);
+    }
+
+    public PyqComment addCommentToPyq(Long pyqId, User user, String commentText) {
+        Pyq pyq = pyqRepository.findById(pyqId).orElseThrow();
+        PyqComment comment = new PyqComment();
+        comment.setPyq(pyq);
+        comment.setUser(user);
+        comment.setCommentText(commentText);
+        comment.setTimestamp(java.time.LocalDateTime.now());
+        return commentRepository.save(comment);
+    }
+
 
     // ADMIN: Create Methods
 
