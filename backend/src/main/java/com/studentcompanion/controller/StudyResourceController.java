@@ -4,26 +4,32 @@ import com.studentcompanion.model.*;
 import com.studentcompanion.repository.UnitRepository;
 import com.studentcompanion.service.StudyResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import org.springframework.web.server.ResponseStatusException;
 import com.studentcompanion.repository.PyqRepository;
 import com.studentcompanion.repository.PyqCommentRepository;
+
 import com.studentcompanion.dto.StudyResourceResponse;
 
 
 import java.io.File;
 import java.util.List;
 import java.io.IOException;
+
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:3000")
+
 public class StudyResourceController {
 
     @Autowired
@@ -32,12 +38,12 @@ public class StudyResourceController {
     // 👨‍🎓 STUDENT: Fetch Semesters, Subjects, Units, Resources, PYQs, Comments
     @Autowired
     private UnitRepository unitRepository;
+
     @Autowired
     private PyqRepository pyqRepository;
 
     @Autowired
     private PyqCommentRepository pyqCommentRepository;
-
 
     @GetMapping("/semesters")
     public List<Semester> getSemesters() {
@@ -48,7 +54,6 @@ public class StudyResourceController {
     public List<Subject> getSubjects(@PathVariable int semester, @RequestParam String branch) {
         return studyService.getSubjectsBySemesterAndBranch(semester, branch);
     }
-
 
 
     @GetMapping("/subjects/{id}/units")
@@ -74,6 +79,12 @@ public class StudyResourceController {
     }
 
     @GetMapping("/pyqs/{id}/comments")
+
+    public List<Comment> getComments(@PathVariable Long id) {
+        return studyService.getCommentsByPyq(id);
+    }
+
+    
     public List<PyqComment> getComments(@PathVariable Long id) {
         return studyService.getCommentsByPyq(id);
     }
@@ -99,7 +110,6 @@ public class StudyResourceController {
     }
 
 
-    // 🛡️ ADMIN ONLY: Add Semesters, Subjects, Units, Resources
 
     @PostMapping("/admin/semesters")
     @PreAuthorize("hasAuthority('ADMIN')")

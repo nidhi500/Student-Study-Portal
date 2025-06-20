@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -25,6 +27,15 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+
+    private Role role = Role.STUDENT;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    private String branch;
+    private String enrollmentNumber;
+
     private Role role = Role.STUDENT; // Default role
 
 
@@ -56,18 +67,29 @@ public class User {
 
     private LocalDate dateOfBirth;
 
+    @ManyToOne
+    @JoinColumn(name = "semester_id")
+    private Semester semester;
+
+    private LocalDate dateOfBirth;
+
     // Getters and Setters
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contribution> contributions;
 
-    public String getName() {
-        return name;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     public void setName(String name) {
         this.name = name;
@@ -128,13 +150,16 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public String getBranch() {
-        return branch;
-    }
 
-    public void setBranch(String branch) {
-        this.branch = branch;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+
+    public boolean isActive() { return isActive; }
+    public void setActive(boolean active) { isActive = active; }
 
     public Semester getSemester() {
         return semester;
@@ -156,63 +181,58 @@ public class User {
         return currentSemester;
     }
 
-    public void setCurrentSemester(Integer currentSemester) {
-        this.currentSemester = currentSemester;
-    }
+    public boolean isEmailVerified() { return emailVerified; }
+    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
 
-    public String getGender() {
-        return gender;
-    }
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
-    public String getGoal() {
-        return goal;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    public void setGoal(String goal) {
-        this.goal = goal;
-    }
+    public String getBranch() { return branch; }
+    public void setBranch(String branch) { this.branch = branch; }
 
-    public String getOtherGoal() {
-        return otherGoal;
-    }
+    public Semester getSemester() { return semester; }
+    public void setSemester(Semester semester) { this.semester = semester; }
 
-    public void setOtherGoal(String otherGoal) {
-        this.otherGoal = otherGoal;
-    }
+    public String getEnrollmentNumber() { return enrollmentNumber; }
+    public void setEnrollmentNumber(String enrollmentNumber) { this.enrollmentNumber = enrollmentNumber; }
 
-    public String getLeetcodeUrl() {
-        return leetcodeUrl;
-    }
+    public Integer getCurrentSemester() { return currentSemester; }
+    public void setCurrentSemester(Integer currentSemester) { this.currentSemester = currentSemester; }
 
-    public void setLeetcodeUrl(String leetcodeUrl) {
-        this.leetcodeUrl = leetcodeUrl;
-    }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
 
-    public String getGithubUrl() {
-        return githubUrl;
-    }
+    public String getGoal() { return goal; }
+    public void setGoal(String goal) { this.goal = goal; }
 
-    public void setGithubUrl(String githubUrl) {
-        this.githubUrl = githubUrl;
-    }
+    public String getOtherGoal() { return otherGoal; }
+    public void setOtherGoal(String otherGoal) { this.otherGoal = otherGoal; }
 
-    public String getSkills() {
-        return skills;
-    }
+    public String getLeetcodeUrl() { return leetcodeUrl; }
+    public void setLeetcodeUrl(String leetcodeUrl) { this.leetcodeUrl = leetcodeUrl; }
 
-    public void setSkills(String skills) {
-        this.skills = skills;
-    }
+    public String getGithubUrl() { return githubUrl; }
+    public void setGithubUrl(String githubUrl) { this.githubUrl = githubUrl; }
+
+    public String getSkills() { return skills; }
+    public void setSkills(String skills) { this.skills = skills; }
+
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this.dateOfBirth = dateOfBirth; }
+
+    public List<Contribution> getContributions() { return contributions; }
+    public void setContributions(List<Contribution> contributions) { this.contributions = contributions; }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
+    public List<Comment> getComments() { return comments; }
+    public void setComments(List<Comment> comments) { this.comments = comments; }
 }

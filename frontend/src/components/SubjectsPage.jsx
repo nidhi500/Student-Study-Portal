@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+
+import { useParams, useSearchParams } from "react-router-dom";
+
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 
 export default function SubjectPage() {
   const { semesterId } = useParams();
   const [searchParams] = useSearchParams();
+
   const navigate = useNavigate();
+
   const branch = searchParams.get("branch");
 
   const [subjects, setSubjects] = useState([]);
@@ -60,6 +65,7 @@ export default function SubjectPage() {
             {subjects.map((subject) => (
               <div
                 key={subject.id}
+                className="bg-white p-6 rounded-xl shadow border-l-4 border-indigo-500 hover:border-indigo-700 transition transform hover:scale-105"
                 onClick={() =>
                   navigate(`/subjects/${subject.id}/units?name=${subject.name}`)
                 }
