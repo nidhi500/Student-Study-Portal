@@ -1,10 +1,7 @@
+// src/pages/ContributePage.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
-function isValidDriveUrl(url) {
-  const pattern = /^https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]{10,})/;
-  return pattern.test(url);
-}
+import CommentSection from "../components/CommentSection";
 
 function extractFileId(url) {
   const match = url.match(/(?:file\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
@@ -13,64 +10,43 @@ function extractFileId(url) {
 
 const ContributePage = () => {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    type: '',
-    subject: '',
-    visibility: '',
-    url: '',
+    title: "",
+    description: "",
+    type: "",
+    subject: "",
+    visibility: "",
+    url: "",
   });
-  const [contributions, setContributions] = useState([]);
-  const [comments, setComments] = useState({});
 
-  const fetchContributions = async () => {
-    const res = await axios.get('http://localhost:8080/api/contributions/my');
-    setContributions(res.data);
-  };
+  const [contributions, setContributions] = useState([]);
 
   useEffect(() => {
-    fetchContributions();
+    axios.get("http://localhost:8080/api/contributions/my").then((res) => setContributions(res.data));
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isValidDriveUrl(formData.url)) {
-      alert('❌ Please enter a valid Google Drive link.');
+
+    const isValidDrive = /^https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)/.test(formData.url);
+    if (!isValidDrive) {
+      alert("❌ Invalid Google Drive link");
       return;
     }
 
     try {
-      const res = await axios.post('http://localhost:8080/api/contributions/add', formData);
-      alert('✅ Contribution submitted');
-      setFormData({ title: '', description: '', type: '', subject: '', visibility: '', url: '' });
-      fetchContributions();
+      await axios.post("http://localhost:8080/api/contributions/add", formData);
+      alert("✅ Contribution submitted");
+      setFormData({ title: "", description: "", type: "", subject: "", visibility: "", url: "" });
+      const res = await axios.get("http://localhost:8080/api/contributions/my");
+      setContributions(res.data);
     } catch (err) {
       console.error(err);
-      alert('❌ Failed to submit contribution');
+      alert("❌ Submission failed");
     }
-  };
-
-  const isValidDriveUrl = (url) => {
-    const pattern = /^https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]{10,})/;
-    return pattern.test(url);
-  };
-
-  const extractFileId = (url) => {
-    const match = url.match(/(?:file\/d\/|id=)([a-zA-Z0-9_-]{10,})/);
-    return match ? match[1] : null;
-  };
-
-  const handleCommentChange = (id, value) => {
-    setComments((prev) => ({ ...prev, [id]: value }));
-  };
-
-  const handleCopyLink = (url) => {
-    navigator.clipboard.writeText(url);
-    alert('📋 Link copied!');
   };
 
   return (
@@ -90,41 +66,14 @@ const ContributePage = () => {
         <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Submit</button>
       </form>
 
-      {/* Contributions List */}
       <div className="mt-8 space-y-6">
         <h3 className="text-lg font-semibold">🧾 Your Contributions</h3>
         {contributions.map((item) => (
           <div key={item.id} className="bg-white rounded-xl shadow-md p-4 space-y-2">
             <h4 className="text-lg font-bold">{item.title}</h4>
             <p className="text-sm text-gray-600">{item.description}</p>
-            <iframe
-              className="w-full h-52 rounded border"
-              src={`https://drive.google.com/file/d/${extractFileId(item.url)}/preview`}
-              allow="autoplay"
-              title={item.title}
-            ></iframe>
-
-            {/* Buttons */}
-            <div className="flex gap-4 mt-2 text-sm">
-              <button className="text-green-600 hover:underline">⬆️ Upvote</button>
-              <button className="text-red-600 hover:underline">⬇️ Downvote</button>
-              <button className="text-pink-600 hover:underline">❤️ Favorite</button>
-              <button className="text-yellow-600 hover:underline">🔖 Bookmark</button>
-              <button onClick={() => handleCopyLink(item.url)} className="text-blue-600 hover:underline">🔗 Share</button>
-              <button className="text-gray-600 hover:underline">🚫 Report</button>
-            </div>
-
-            {/* Comments */}
-            <div className="mt-3">
-              <textarea
-                rows="2"
-                className="w-full border p-2 rounded text-sm"
-                placeholder="Add a comment..."
-                value={comments[item.id] || ''}
-                onChange={(e) => handleCommentChange(item.id, e.target.value)}
-              />
-              <button className="mt-1 bg-gray-200 px-3 py-1 rounded hover:bg-gray-300 text-sm">Post Comment</button>
-            </div>
+            <iframe className="w-full h-52 rounded border" src={`https://drive.google.com/file/d/${extractFileId(item.url)}/preview`} allow="autoplay" title={item.title} />
+            <CommentSection contextType="CONTRIBUTION" contextId={item.id} />
           </div>
         ))}
       </div>

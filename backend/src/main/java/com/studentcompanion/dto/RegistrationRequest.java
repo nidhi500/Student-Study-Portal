@@ -1,6 +1,7 @@
 package com.studentcompanion.dto;
 
 import java.time.LocalDate;
+import com.studentcompanion.model.CareerGoal;
 
 public class RegistrationRequest {
     private String name;
@@ -11,7 +12,7 @@ public class RegistrationRequest {
     private String branch;
     private Integer currentSemester;
     private String gender;
-    private String goal;
+    private CareerGoal goal; 
     private String otherGoal;
     private String leetcodeUrl;
     private String githubUrl;
@@ -78,12 +79,9 @@ public class RegistrationRequest {
         this.gender = gender;
     }
 
-    public String getGoal() {
-        return goal;
-    }
-    public void setGoal(String goal) {
-        this.goal = goal;
-    }
+    public CareerGoal getGoal() { return goal; }
+    public void setGoal(CareerGoal goal) { this.goal = goal; }
+
 
     public String getOtherGoal() {
         return otherGoal;

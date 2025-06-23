@@ -1,3 +1,4 @@
+// src/pages/ProfilePage.js
 import React, { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import UserInfoCard from './UserInfoCard';
@@ -5,19 +6,17 @@ import AssignmentCalendar from './AssignmentCalendar';
 import WeeklySchedule from './WeeklySchedule';
 import DashboardSummary from './DashboardSummary';
 import RemindersPanel from './RemindersPanel';
-import ThemeToggle from './ThemeToggle'; // ✅ import the toggle
+import ThemeToggle from './ThemeToggle';
 import TodoList from './TodoList';
 import axios from "axios";
 import UserContributions from '../components/UserContributions';
-
-
-
+import UserComments from '../components/UserComments'; // ✅ NEW
 
 function ProfilePage() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/users/1') // 🔗 full backend URL
+    fetch('http://localhost:8080/api/users/1') // ✅ You can dynamically fetch using token/session
       .then(res => {
         console.log('Status:', res.status);
         return res.json();
@@ -33,7 +32,7 @@ function ProfilePage() {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-indigo-100 to-white dark:from-gray-900 dark:to-black text-gray-900 dark:text-white relative">
-      {/* ✅ Floating Dark Mode Toggle */}
+      {/* ✅ Dark Mode Toggle */}
       <div className="absolute top-4 right-4 z-50">
         <ThemeToggle />
       </div>
@@ -50,11 +49,15 @@ function ProfilePage() {
           reminders={[{ done: true }]}
         />
         <RemindersPanel />
-         <TodoList />   
-       <RemindersPanel />
-<UserContributions />
+        <TodoList />
+        <RemindersPanel />
+
+        {/* ✅ User Contributions */}
+        <UserContributions />
+
+        {/* ✅ User Comments */}
+        <UserComments />
       </main>
-  
     </div>
   );
 }

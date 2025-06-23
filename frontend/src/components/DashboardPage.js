@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuthStore } from './authStore';
+import { useAuthStore } from '../stores/authStore';
 
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user) || {};
@@ -45,10 +45,17 @@ export default function DashboardPage() {
 
           {/* Goal Dashboard */}
           <Card
-            title="🎯 Goal Dashboard"
-            desc={`View content & tools tailored for your goal: ${goal}`}
-            link="/goal-dashboard"
+            title={`🎯 ${goal !== "Not Set" ? goal : "Career Goal"} Dashboard`}
+            desc={
+              goal === "GATE" ? "Practice GATE PYQs and quizzes for your branch" :
+              goal === "CAT" ? "Take CAT-level aptitude quizzes and track your progress" :
+              goal === "UPSC" ? "Attempt UPSC PYQs for Prelims & track correctness" :
+              goal === "PLACEMENT" ? "Track Striver sheet progress and attempt logical quizzes" :
+              "Set a career goal to begin your preparation!"
+            }
+            link={`/goal/${goal.toLowerCase()}`} // ✅ instead of hardcoded "/goal-dashboard"
           />
+
 
           {/* Quizzes */}
           <Card

@@ -1,4 +1,5 @@
 package com.studentcompanion.dto;
+import com.studentcompanion.model.CareerGoal;
 
 public class AuthResponse {
     private String token;
@@ -6,15 +7,17 @@ public class AuthResponse {
     private String email;
     private String branch;
     private int currentSemester;
+    private CareerGoal goal;
 
     public AuthResponse() {}
 
-    public AuthResponse(String token, String name, String email, String branch, int currentSemester) {
+    public AuthResponse(String token, String name, String email, String branch, int currentSemester, CareerGoal goal) {
         this.token = token;
         this.name = name;
         this.email = email;
         this.branch = branch;
         this.currentSemester = currentSemester;
+        this.goal = goal;
     }
 
     // Getters and setters
@@ -32,4 +35,13 @@ public class AuthResponse {
 
     public int getCurrentSemester() { return currentSemester; }
     public void setCurrentSemester(int currentSemester) { this.currentSemester = currentSemester; }
+
+    public CareerGoal getGoal() {
+        return goal;
+    }
+
+    public void setGoal(CareerGoal goal) {
+        this.goal = goal;
+    }
+
 }

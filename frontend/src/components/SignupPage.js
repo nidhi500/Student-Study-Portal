@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuthStore } from "./authStore"; // ✅ make sure this is imported
+import { useAuthStore } from "../stores/authStore"; // ✅ make sure this is imported
 
 function SignupPage() {
   const [formData, setFormData] = useState({
@@ -35,61 +35,69 @@ function SignupPage() {
   };
 
   const handleSignup = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    const requestBody = {
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      enrollmentNumber: formData.enrollment,
-      branch: formData.branch,
-      currentSemester: parseInt(formData.semester),
-      dateOfBirth: formData.dob,
-      gender: formData.gender,
-      goal: formData.goal,
-      otherGoal: formData.otherGoal,
-      leetcodeUrl: formData.leetcode,
-      githubUrl: formData.github,
-      skills: formData.skills,
-      profilePictureUrl: null
+  const requestBody = {
+    name: formData.name,
+    email: formData.email,
+    password: formData.password,
+    enrollmentNumber: formData.enrollment,
+    branch: formData.branch,
+    currentSemester: parseInt(formData.semester),
+    dateOfBirth: formData.dob,
+    gender: formData.gender,
+    goal: formData.goal,
+    otherGoal: formData.otherGoal,
+    leetcodeUrl: formData.leetcode,
+    githubUrl: formData.github,
+    skills: formData.skills,
+    profilePictureUrl: null
+  };
+
+  try {
+    const res = await axios.post("http://localhost:8080/api/auth/register", requestBody, {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    const {
+      token,
+      name,
+      email: userEmail,
+      branch,
+      currentSemester,
+      goal
+    } = res.data;
+
+    const user = {
+      name,
+      email: userEmail,
+      branch,
+      currentSemester,
+      goal
     };
 
-    try {
-      const res = await axios.post("http://localhost:8080/api/auth/register", requestBody, {
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    useAuthStore.getState().setUser(user, token); // ✅ CORRECT USAGE
 
-      // ✅ Updated: full user object and auth store
-      const { token, name, email } = res.data;
-      const user = {
-        name,
-        email,
-        branch: formData.branch,
-        currentSemester: parseInt(formData.semester)
-      };
+    navigate("/dashboard");
+  } catch (err) {
+    const errorMessage = err.response?.data?.message || err.response?.data?.error || "Signup failed";
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
-      useAuthStore.getState().setUser(user); // ✅ Zustand update
-
-      navigate("/dashboard");
-    } catch (err) {
-      console.log("Full error response:", err.response?.data);
-      const errorMessage = err.response?.data?.message || err.response?.data?.error || "Signup failed";
-
-      if (errorMessage.toLowerCase().includes("email already exists")) {
-        setError("Email already exists. Redirecting to login...");
-        setTimeout(() => navigate("/login"), 2500);
-      } else {
-        setError("Signup failed: " + errorMessage);
-      }
-      setLoading(false);
+    if (errorMessage.toLowerCase().includes("email already exists")) {
+      setError("Email already exists. Redirecting to login...");
+      setTimeout(() => navigate("/login"), 2500);
+    } else {
+      setError("Signup failed: " + errorMessage);
     }
-  };
+    setLoading(false);
+  }
+};
+
 
   // 👇 The rest of your JSX remains 100% unchanged — as requested
   return (

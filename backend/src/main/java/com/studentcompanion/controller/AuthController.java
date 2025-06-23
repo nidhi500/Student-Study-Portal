@@ -29,6 +29,7 @@ import com.studentcompanion.repository.UserRepository;
 import com.studentcompanion.service.CustomUserDetailsService;
 import com.studentcompanion.util.JwtUtil;
 import com.studentcompanion.model.Role;
+import com.studentcompanion.model.CareerGoal;
 
 
 
@@ -76,7 +77,8 @@ public class AuthController {
     user.getName(),
     user.getEmail(),
     user.getBranch(),
-    user.getCurrentSemester()
+    user.getCurrentSemester(),
+    user.getGoal()
 ));
 
     }
@@ -126,7 +128,8 @@ public class AuthController {
     user.getName(),
     user.getEmail(),
     user.getBranch(),
-    user.getCurrentSemester()
+    user.getCurrentSemester(),
+    user.getGoal()
 ));
 
 } catch (Exception e) {

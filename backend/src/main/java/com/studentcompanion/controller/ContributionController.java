@@ -1,11 +1,11 @@
 package com.studentcompanion.controller;
 
-import com.studentcompanion.model.Comment;
 import com.studentcompanion.model.Contribution;
 import com.studentcompanion.model.User;
-import com.studentcompanion.repository.CommentRepository;
 import com.studentcompanion.repository.ContributionRepository;
 import com.studentcompanion.repository.UserRepository;
+import com.studentcompanion.model.CareerGoal;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/contributions")
@@ -26,8 +25,8 @@ private ContributionRepository contributionRepository;
 @Autowired
 private UserRepository userRepository;
 
-@Autowired
-private CommentRepository commentRepository;
+// @Autowired
+// private CommentRepository commentRepository;
 
 @PostMapping("/add")
 public ResponseEntity<?> addContribution(@RequestBody Contribution contribution, Authentication authentication) {
@@ -84,10 +83,5 @@ Contribution c = contributionRepository.findById(id).orElseThrow();
 return ResponseEntity.ok(c.getBookmarks());
 }
 
-@GetMapping("/{id}/comments")
-public ResponseEntity<?> getComments(@PathVariable Long id) {
-Contribution c = contributionRepository.findById(id).orElseThrow();
-return ResponseEntity.ok(c.getComments());
-}
 
 }

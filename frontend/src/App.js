@@ -8,14 +8,12 @@ import DashboardPage from './components/DashboardPage';
 import ProfilePage from './components/ProfilePage';
 import SubjectsPage from './components/SubjectsPage';
 import ProtectedRoute from './components/ProtectedRoute';
-
+import CareerGoalPage from './pages/CareerGoalPage';
 import { ThemeProvider } from "./context/ThemeContext";
 import './utils/axiosConfig'; // ensure Axios config loads
 import ContributePage from './pages/ContributePage';
 
 import UnitPage from './components/UnitPage';
-import { ThemeProvider } from "./context/ThemeContext";
-import './utils/axiosConfig'; // ensure Axios config loads
 
 
 function App() {
@@ -27,6 +25,12 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/goal/:goal" element={
+            <ProtectedRoute>
+              <CareerGoalPage />
+            </ProtectedRoute>
+          } />
+
 
           <Route path="/subjects/:subjectId/units" element={<UnitPage />} />
 

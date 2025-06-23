@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "./authStore";
+import { useAuthStore } from "../stores/authStore";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -19,16 +19,26 @@ export default function LoginPage() {
         password,
       });
 
+      const {
+        token,
+        name,
+        email: userEmail,
+        branch,
+        currentSemester,
+        goal
+      } = response.data;
+
       const user = {
-        name: response.data.name,
-        email: response.data.email,
-        branch: response.data.branch,
-        currentSemester: response.data.currentSemester,
+        name,
+        email: userEmail,
+        branch,
+        currentSemester,
+        goal
       };
 
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
-      useAuthStore.getState().setUser(user);
+      useAuthStore.getState().setUser(user, token); // ✅ CORRECT USAGE
 
       navigate("/dashboard");
     } catch (err) {
@@ -36,7 +46,6 @@ export default function LoginPage() {
       setError("Invalid email or password");
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-indigo-100 via-purple-100 to-pink-100 px-4">
       <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-md">

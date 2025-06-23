@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "./authStore";
+import { useAuthStore } from "../stores/authStore";
 
 const BASE_URL = "http://localhost:8080/api/auth"; // adjust if needed
 

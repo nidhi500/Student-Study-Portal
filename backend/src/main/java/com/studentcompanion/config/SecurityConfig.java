@@ -1,6 +1,7 @@
 package com.studentcompanion.config;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -49,13 +50,13 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    // Auth Manager
+    // Authentication Manager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // Main Security Filter Chain
+    // Security Filter Chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -63,14 +64,18 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Publicly accessible endpoints
                 .requestMatchers(
-                    "/api/auth/**",           // ✅ Allow login and register
-                    "/api/public/**",         // ✅ Any public endpoint
-                    "/api/todos/**",          // ✅ Your todo APIs
+                    "/api/auth/**",
+                    "/api/public/**",
+                    "/api/todos/**",
                     "/", "/favicon.ico", "/css/**", "/js/**", "/images/**"
                 ).permitAll()
+
+                // Secure endpoints
                 .requestMatchers("/api/users/profile", "/api/users/all").authenticated()
-                .anyRequest().permitAll()
+                .requestMatchers("/api/comments/**").authenticated() // 👈 Required for comment POST
+                .anyRequest().permitAll() // fallback
             )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -78,13 +83,13 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // CORS Configuration for localhost:3000
+    // CORS Configuration
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

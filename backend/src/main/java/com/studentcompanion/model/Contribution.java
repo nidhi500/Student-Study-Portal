@@ -35,9 +35,6 @@ private LocalDateTime createdAt = LocalDateTime.now();
 @JoinColumn(name = "user_id")
 private User user;
 
-@OneToMany(mappedBy = "contribution", cascade = CascadeType.ALL, orphanRemoval = true)
-private List<Comment> comments;
-
 // Getters & Setters
 
 public Long getId() { return id; }
@@ -79,6 +76,4 @@ public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; 
 public User getUser() { return user; }
 public void setUser(User user) { this.user = user; }
 
-public List<Comment> getComments() { return comments; }
-public void setComments(List<Comment> comments) { this.comments = comments; }
 }
