@@ -11,7 +11,7 @@ export default function CareerQuiz({ goal }) {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/career/quiz/${goal.toUpperCase()}`)
+      .get(`http://localhost:8080/api/quiz/${goal.toUpperCase()}`)
       .then((res) => {
         setQuestions(res.data);
         setLoading(false);
@@ -33,7 +33,7 @@ export default function CareerQuiz({ goal }) {
     }));
 
     try {
-      const res = await axios.post("http://localhost:8080/api/career/quiz/submit", submission);
+      const res = await axios.post("http://localhost:8080/api/quiz/submit", submission);
       setScore(res.data);
       setSubmitted(true);
     } catch (e) {
