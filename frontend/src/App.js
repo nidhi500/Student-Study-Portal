@@ -14,6 +14,7 @@ import './utils/axiosConfig'; // ensure Axios config loads
 import ContributePage from './pages/ContributePage';
 
 import UnitPage from './components/UnitPage';
+import './utils/axiosConfig'; // ensure Axios config loads
 
 
 function App() {
