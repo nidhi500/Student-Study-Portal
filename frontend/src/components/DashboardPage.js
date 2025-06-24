@@ -59,8 +59,14 @@ export default function DashboardPage() {
 
           {/* Quizzes */}
           <Card
-            title="📝 Quizzes"
-            desc="Take tests, track scores, and earn badges."
+            title={`📝 ${goal !== "Not Set" ? goal : "Career Goal"} Quizzes`}
+            desc={
+              goal === "GATE" ? "Practice GATE PYQs and quizzes for your branch" :
+              goal === "CAT" ? "Take CAT-level aptitude quizzes and track your progress" :
+              goal === "UPSC" ? "Attempt UPSC PYQs for Prelims & track correctness" :
+              goal === "PLACEMENT" ? " Attempt logical quizzes & Practice for OAs" :
+              "Set a career goal to begin your preparation!"
+            }
             link="/quizzes"
           />
 

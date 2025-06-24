@@ -1,4 +1,3 @@
-// App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LandingPage from './components/LandingPage';
@@ -10,11 +9,14 @@ import SubjectsPage from './components/SubjectsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import CareerGoalPage from './pages/CareerGoalPage';
 import { ThemeProvider } from "./context/ThemeContext";
-import './utils/axiosConfig'; // ensure Axios config loads
+import './utils/axiosConfig';
 import ContributePage from './pages/ContributePage';
-
 import UnitPage from './components/UnitPage';
+
 import './utils/axiosConfig'; // ensure Axios config loads
+
+import QuizPage from './components/QuizPage'; // ✅ ADD THIS LINE
+
 
 
 function App() {
@@ -26,6 +28,7 @@ function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/quizzes" element={<QuizPage />} />
           <Route path="/goal/:goal" element={
             <ProtectedRoute>
               <CareerGoalPage />
