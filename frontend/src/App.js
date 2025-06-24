@@ -12,6 +12,9 @@ import { ThemeProvider } from "./context/ThemeContext";
 import './utils/axiosConfig';
 import ContributePage from './pages/ContributePage';
 import UnitPage from './components/UnitPage';
+
+import './utils/axiosConfig'; // ensure Axios config loads
+
 import QuizPage from './components/QuizPage'; // ✅ ADD THIS LINE
 
 
