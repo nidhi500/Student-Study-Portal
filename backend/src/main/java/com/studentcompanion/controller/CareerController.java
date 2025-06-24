@@ -1,18 +1,13 @@
 package com.studentcompanion.controller;
 
-import com.studentcompanion.dto.QuizSubmissionDTO;
-import com.studentcompanion.model.CareerGoal;
-import com.studentcompanion.model.QuizQuestion;
-import com.studentcompanion.model.StriverTopic;
-import com.studentcompanion.model.User;
-import com.studentcompanion.repository.QuizQuestionRepository;
+import com.studentcompanion.model.*;
+import com.studentcompanion.repository.CareerResourceRepository;
 import com.studentcompanion.repository.StriverTopicRepository;
 import com.studentcompanion.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import java.util.*;
 
@@ -21,12 +16,39 @@ import java.util.*;
 @CrossOrigin(origins = "*")
 public class CareerController {
 
-    @Autowired private QuizQuestionRepository quizQuestionRepository;
-    @Autowired private UserRepository userRepository;
-    @Autowired private StriverTopicRepository striverTopicRepository;
+    @Autowired
+    private CareerResourceRepository careerResourceRepository;
 
+    @Autowired
+    private UserRepository userRepository;
 
-    // 🧠 Get placement preparation progress (Striver sheet) for user
+    @Autowired
+    private StriverTopicRepository striverTopicRepository;
+
+    // 🎯 Get resources for a specific goal
+    @GetMapping("/{goal}")
+    public ResponseEntity<?> getCareerResourcesByGoal(@PathVariable("goal") CareerGoal goal) {
+        List<CareerResource> all = careerResourceRepository.findByGoal(goal);
+        return ResponseEntity.ok(all);
+    }
+
+    // 🎯 Get filtered resources by goal and type
+    @GetMapping("/{goal}/{type}")
+    public ResponseEntity<?> getCareerResourcesByGoalAndType(
+            @PathVariable("goal") CareerGoal goal,
+            @PathVariable("type") ResourceType type
+    ) {
+        List<CareerResource> list = careerResourceRepository.findByGoalAndType(goal, type);
+        return ResponseEntity.ok(list);
+    }
+
+    // ✍️ Admin Upload Career Resource
+    @PostMapping("/admin/upload")
+    public ResponseEntity<?> uploadCareerResource(@RequestBody CareerResource resource) {
+        return ResponseEntity.ok(careerResourceRepository.save(resource));
+    }
+
+    // ✅ Existing: Placement progress (Striver)
     @GetMapping("/placement/progress")
     public ResponseEntity<?> getStriverProgress(Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName());
@@ -73,7 +95,7 @@ public class CareerController {
         return ResponseEntity.ok().build();
     }
 
-    // 🎯 Get current user's career goal
+    // 🧭 Current Goal
     @GetMapping("/goal")
     public ResponseEntity<Map<String, String>> getUserGoal(Authentication authentication) {
         User user = userRepository.findByEmail(authentication.getName());
@@ -81,7 +103,7 @@ public class CareerController {
         return ResponseEntity.ok(Collections.singletonMap("goal", goal));
     }
 
-    // 🔧 Helper to return a default list of placement topics
+    // 🔧 Defaults for placement
     private List<StriverTopic> getDefaultStriverTopics(User user) {
         return List.of(
                 createTopic(user, "Arrays - Easy", "https://leetcode.com/tag/array/"),
