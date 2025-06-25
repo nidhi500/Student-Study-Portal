@@ -8,16 +8,18 @@ public class AuthResponse {
     private String branch;
     private int currentSemester;
     private CareerGoal goal;
+    private String enrollmentNumber;
 
     public AuthResponse() {}
 
-    public AuthResponse(String token, String name, String email, String branch, int currentSemester, CareerGoal goal) {
+    public AuthResponse(String token, String name, String email, String branch, int currentSemester, CareerGoal goal, String enrollmentNumber) {
         this.token = token;
         this.name = name;
         this.email = email;
         this.branch = branch;
         this.currentSemester = currentSemester;
         this.goal = goal;
+        this.enrollmentNumber = enrollmentNumber;
     }
 
     // Getters and setters

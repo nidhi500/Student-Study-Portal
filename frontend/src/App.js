@@ -12,6 +12,9 @@ import { ThemeProvider } from "./context/ThemeContext";
 import './utils/axiosConfig';
 import ContributePage from './pages/ContributePage';
 import UnitPage from './components/UnitPage';
+import Contact from './components/Contact';
+import About from './components/About';
+import Features from './components/Features';
 
 import './utils/axiosConfig'; // ensure Axios config loads
 
@@ -32,7 +35,9 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/quizzes" element={<QuizPage />} />
-          
+          <Route path="/features" element={<Features />} />
+          <Route path="/about" element={<About />} /> 
+          <Route path="/contact" element={<Contact />} />
           <Route path="/goal/:goal" element={
             <ProtectedRoute>
               <CareerGoalPage />

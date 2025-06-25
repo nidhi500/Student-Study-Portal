@@ -76,7 +76,8 @@ public class AuthController {
     user.getEmail(),
     user.getBranch(),
     user.getCurrentSemester(),
-    user.getGoal()
+    user.getGoal(),
+    user.getEnrollmentNumber()
 ));
 
     }
@@ -137,7 +138,8 @@ public class AuthController {
     user.getEmail(),
     user.getBranch(),
     user.getCurrentSemester(),
-    user.getGoal()
+    user.getGoal(),
+    user.getEnrollmentNumber()
 ));
 
 } catch (Exception e) {
@@ -186,3 +188,4 @@ public class AuthController {
         return ResponseEntity.ok("Auth controller is working!");
     }
 }
+

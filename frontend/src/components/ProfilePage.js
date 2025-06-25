@@ -9,16 +9,10 @@ import ThemeToggle from './ThemeToggle';
 import TodoList from './TodoList';
 import UserContributions from '../components/UserContributions';
 import UserComments from '../components/UserComments';
+import { useAuthStore } from '../stores/authStore';
 
-function ProfilePage() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    fetch('http://localhost:8080/api/users/1')
-      .then(res => res.json())
-      .then(data => setUser(data))
-      .catch(err => console.error('❌ Error fetching user:', err));
-  }, []);
+export default function ProfilePage() {
+  const user = useAuthStore((state) => state.user); // ✅ use Zustand
 
   if (!user) return <div className="text-center p-10 text-gray-500">⏳ Loading profile...</div>;
 
@@ -32,7 +26,7 @@ function ProfilePage() {
 
       <main className="flex-1 p-6 md:p-8 overflow-y-auto space-y-12 scroll-smooth">
         <section id="overview">
-          <UserInfoCard user={user} setUser={setUser} />
+          <UserInfoCard /> {/* ✅ no props needed */}
         </section>
 
         <section id="calendar">
@@ -63,4 +57,3 @@ function ProfilePage() {
   );
 }
 
-export default ProfilePage;
