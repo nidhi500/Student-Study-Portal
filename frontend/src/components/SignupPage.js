@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuthStore } from "../stores/authStore"; // ✅ make sure this is imported
+import { useAuthStore } from "../stores/authStore";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // 👁️ Import eye icons
 
 function SignupPage() {
   const [formData, setFormData] = useState({
@@ -18,11 +19,12 @@ function SignupPage() {
     leetcode: "",
     github: "",
     skills: "",
-    profilePic: null
+    profilePic: null,
   });
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false); // 👁️ Eye toggle
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -34,104 +36,133 @@ function SignupPage() {
     }
   };
 
-  const handleSignup = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+  const isFormValid = () => {
+    const {
+      name, email, password, enrollment, branch,
+      semester, dob, gender, goal, otherGoal, leetcode, github, skills,
+    } = formData;
 
-  const requestBody = {
-    name: formData.name,
-    email: formData.email,
-    password: formData.password,
-    enrollmentNumber: formData.enrollment,
-    branch: formData.branch,
-    currentSemester: parseInt(formData.semester),
-    dateOfBirth: formData.dob,
-    gender: formData.gender,
-    goal: formData.goal,
-    otherGoal: formData.otherGoal,
-    leetcodeUrl: formData.leetcode,
-    githubUrl: formData.github,
-    skills: formData.skills,
-    profilePictureUrl: null
+    if (!name || !email || !password || !enrollment || !branch || !semester || !dob || !gender || !goal)
+      return false;
+
+    if (goal === "OTHERS" && !otherGoal) return false;
+    if (goal === "PLACEMENT" && (!leetcode || !github || !skills)) return false;
+
+    return true;
   };
 
-  try {
-    const res = await axios.post("http://localhost:8080/api/auth/register", requestBody, {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setError("");
 
-    const {
-      token,
-      name,
-      email: userEmail,
-      branch,
-      currentSemester,
-      goal
-    } = res.data;
+    if (!isFormValid()) {
+      setError("Please fill all required fields.");
+      return;
+    }
 
-    const user = {
-      name,
-      email: userEmail,
-      branch,
-      currentSemester,
-      goal
+    setLoading(true);
+
+    const requestBody = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      enrollmentNumber: formData.enrollment,
+      branch: formData.branch,
+      currentSemester: parseInt(formData.semester),
+      dateOfBirth: formData.dob,
+      gender: formData.gender,
+      goal: formData.goal,
+      otherGoal: formData.otherGoal || "",
+      leetcodeUrl: formData.leetcode || "",
+      githubUrl: formData.github || "",
+      skills: formData.skills || "",
+      profilePictureUrl: null,
     };
 
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    useAuthStore.getState().setUser(user, token); // ✅ CORRECT USAGE
+    try {
+      const res = await axios.post("http://localhost:8080/api/auth/register", requestBody, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-    navigate("/dashboard");
-  } catch (err) {
-    const errorMessage = err.response?.data?.message || err.response?.data?.error || "Signup failed";
+      const { token, name, email: userEmail, branch, currentSemester, goal } = res.data;
 
-    if (errorMessage.toLowerCase().includes("email already exists")) {
-      setError("Email already exists. Redirecting to login...");
-      setTimeout(() => navigate("/login"), 2500);
-    } else {
-      setError("Signup failed: " + errorMessage);
+      const user = { name, email: userEmail, branch, currentSemester, goal };
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+      useAuthStore.getState().setUser(user, token);
+
+      navigate("/dashboard");
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || err.response?.data?.error || "Signup failed";
+
+      if (errorMessage.toLowerCase().includes("email already exists")) {
+        setError("Email already exists. Redirecting to login...");
+        setTimeout(() => navigate("/login"), 2500);
+      } else {
+        setError("Signup failed: " + errorMessage);
+      }
+
+      setLoading(false);
     }
-    setLoading(false);
-  }
-};
+  };
 
-
-  // 👇 The rest of your JSX remains 100% unchanged — as requested
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-indigo-200">
       <div className="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-xl">
-        <h2 className="text-3xl font-bold text-center text-indigo-700 mb-6">Create an Account</h2>
+        <h2 className="text-3xl font-bold text-center text-indigo-700 mb-6">
+          Create an Account
+        </h2>
 
         <form onSubmit={handleSignup} className="space-y-4">
           <input type="text" name="name" placeholder="Full Name" required value={formData.name} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
           <input type="email" name="email" placeholder="Email" required value={formData.email} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
-          <input type="password" name="password" placeholder="Password" required value={formData.password} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
-          <input type="text" name="enrollment" placeholder="Enrollment Number" value={formData.enrollment} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
+
+          {/* 👁️ Password with eye toggle */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Password"
+              required
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg pr-10"
+            />
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-600"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </span>
+          </div>
+
+          <input type="text" name="enrollment" placeholder="Enrollment Number" required value={formData.enrollment} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
 
           <div className="flex gap-4">
-            <select name="branch" value={formData.branch} onChange={handleChange} className="w-1/2 px-4 py-2 border rounded-lg">
+            <select name="branch" value={formData.branch} onChange={handleChange} className="w-1/2 px-4 py-2 border rounded-lg" required>
               <option value="">Select Branch</option>
               <option value="ECE">ECE</option>
               <option value="IT">IT</option>
             </select>
-            <select name="semester" value={formData.semester} onChange={handleChange} className="w-1/2 px-4 py-2 border rounded-lg">
+            <select name="semester" value={formData.semester} onChange={handleChange} className="w-1/2 px-4 py-2 border rounded-lg" required>
               <option value="">Select Semester</option>
-              {[3, 4, 5, 6].map((s) => <option key={s} value={s}>{s}</option>)}
+              {[3, 4, 5, 6].map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
             </select>
           </div>
 
-          <input type="date" name="dob" value={formData.dob} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
-          <select name="gender" value={formData.gender} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg">
+          <input type="date" name="dob" value={formData.dob} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg" />
+
+          <select name="gender" value={formData.gender} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg">
             <option value="">Select Gender</option>
             <option>Male</option>
             <option>Female</option>
             <option>Other</option>
           </select>
 
-          <select name="goal" value={formData.goal} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg">
+          <select name="goal" value={formData.goal} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg">
             <option value="">Select Goal</option>
             <option value="PLACEMENT">Placement</option>
             <option value="UPSC">UPSC</option>
@@ -140,15 +171,16 @@ function SignupPage() {
             <option value="OTHERS">Others</option>
           </select>
 
+          {/* Conditional fields */}
           {formData.goal === "OTHERS" && (
-            <input type="text" name="otherGoal" placeholder="Please specify" value={formData.otherGoal} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
+            <input type="text" name="otherGoal" placeholder="Please specify" value={formData.otherGoal} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg" />
           )}
 
           {formData.goal === "PLACEMENT" && (
             <>
-              <input type="url" name="leetcode" placeholder="LeetCode URL" value={formData.leetcode} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
-              <input type="url" name="github" placeholder="GitHub URL" value={formData.github} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
-              <input type="text" name="skills" placeholder="Skills (comma separated)" value={formData.skills} onChange={handleChange} className="w-full px-4 py-2 border rounded-lg" />
+              <input type="url" name="leetcode" placeholder="LeetCode URL" value={formData.leetcode} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg" />
+              <input type="url" name="github" placeholder="GitHub URL" value={formData.github} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg" />
+              <input type="text" name="skills" placeholder="Skills (comma separated)" value={formData.skills} onChange={handleChange} required className="w-full px-4 py-2 border rounded-lg" />
             </>
           )}
 

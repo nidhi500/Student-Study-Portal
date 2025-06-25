@@ -7,6 +7,7 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-white to-blue-100">
+      
       {/* Navigation Header */}
       <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
         <div className="flex items-center gap-3">
