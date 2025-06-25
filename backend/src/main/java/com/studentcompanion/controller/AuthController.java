@@ -1,9 +1,9 @@
 package com.studentcompanion.controller;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +13,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,12 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.studentcompanion.dto.AuthRequest;
 import com.studentcompanion.dto.AuthResponse;
 import com.studentcompanion.dto.RegistrationRequest;
+import com.studentcompanion.model.Role;
 import com.studentcompanion.model.User;
 import com.studentcompanion.repository.UserRepository;
 import com.studentcompanion.service.CustomUserDetailsService;
 import com.studentcompanion.util.JwtUtil;
-import com.studentcompanion.model.Role;
-import com.studentcompanion.model.CareerGoal;
 
 
 
@@ -86,10 +84,20 @@ public class AuthController {
     // ---------- REGISTER ----------
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegistrationRequest request) {
-        Map<String, String> errors = validateRegistrationInput(request);
-        if (!errors.isEmpty()) {
-            return ResponseEntity.badRequest().body(errors);
-        }
+        System.out.println("🧪 Incoming registration request:");
+    System.out.println("Name: " + request.getName());
+    System.out.println("Email: " + request.getEmail());
+    System.out.println("Password: " + request.getPassword());
+    System.out.println("DOB: " + request.getDateOfBirth());
+    System.out.println("Gender: " + request.getGender());
+    System.out.println("Goal: " + request.getGoal());
+    System.out.println("Current Sem: " + request.getCurrentSemester());
+
+    Map<String, String> errors = validateRegistrationInput(request);
+    if (!errors.isEmpty()) {
+        System.out.println("❌ Validation Errors: " + errors);
+        return ResponseEntity.badRequest().body(errors);
+    }
 
         // Check if user already exists
         if (userRepository.findByEmail(request.getEmail()) != null) {

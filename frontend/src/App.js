@@ -16,25 +16,28 @@ import UnitPage from './components/UnitPage';
 import './utils/axiosConfig'; // ensure Axios config loads
 
 import QuizPage from './components/QuizPage'; // ✅ ADD THIS LINE
-
+import { ToastContainer } from "react-toastify";
 
 
 function App() {
   return (
     <ThemeProvider>
+ 
       <Router>
+             
+  <ToastContainer />
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/quizzes" element={<QuizPage />} />
+          
           <Route path="/goal/:goal" element={
             <ProtectedRoute>
               <CareerGoalPage />
             </ProtectedRoute>
           } />
-
 
           <Route path="/subjects/:subjectId/units" element={<UnitPage />} />
 

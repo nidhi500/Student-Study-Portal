@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import LogoutButton from "./LogoutButton";
 
 export default function DashboardPage() {
   const user = useAuthStore((state) => state.user) || {};
@@ -24,12 +25,7 @@ export default function DashboardPage() {
           <span>
             Welcome, <span className="text-indigo-700 font-semibold">{user.name || "Student"}</span>
           </span>
-          <button
-            onClick={logout}
-            className="bg-indigo-500 text-white px-3 py-1 rounded hover:bg-indigo-600 transition"
-          >
-            Logout
-          </button>
+          <LogoutButton />
         </div>
       </nav>
 

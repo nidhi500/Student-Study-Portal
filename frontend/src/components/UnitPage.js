@@ -17,7 +17,7 @@ export default function UnitPage() {
   const [resources, setResources] = useState([]);
   const [pyqs, setPyqs] = useState([]);
 
-  const { user } = useAuthStore();
+  
 
   useEffect(() => {
     axios
@@ -38,7 +38,6 @@ export default function UnitPage() {
       .then((res) => setPyqs(res.data));
   }, [units, activeUnitIndex]);
 
-  const currentUnit = units[activeUnitIndex];
   const filteredResources = resources.filter((r) => r.type === activeTab);
 
   const getEmbedUrl = (url) => {
