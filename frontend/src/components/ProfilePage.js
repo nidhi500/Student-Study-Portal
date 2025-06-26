@@ -1,5 +1,5 @@
 // src/components/ProfilePage.js
-import React, { useEffect, useState } from 'react';
+
 import Sidebar from './Sidebar';
 import UserInfoCard from './UserInfoCard';
 import AssignmentCalendar from './AssignmentCalendar';
@@ -8,7 +8,6 @@ import RemindersPanel from './RemindersPanel';
 import ThemeToggle from './ThemeToggle';
 import TodoList from './TodoList';
 import UserContributions from '../components/UserContributions';
-import UserComments from '../components/UserComments';
 import { useAuthStore } from '../stores/authStore';
 
 export default function ProfilePage() {
@@ -49,9 +48,6 @@ export default function ProfilePage() {
           <UserContributions />
         </section>
 
-        <section id="comments">
-          <UserComments />
-        </section>
       </main>
     </div>
   );

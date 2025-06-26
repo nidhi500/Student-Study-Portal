@@ -15,17 +15,35 @@ export default function ReminderCard({ reminder }) {
   )}/${formatGoogleDate(end)}`;
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 mb-4 space-y-2">
-      <h4 className="text-lg font-semibold text-indigo-700 dark:text-indigo-300">{title}</h4>
-      <p className="text-sm text-gray-600 dark:text-gray-300">{description}</p>
-      <p className="text-sm text-gray-500 dark:text-gray-400">
-        🕒 {new Date(start).toLocaleString()} - {new Date(end).toLocaleTimeString()}
-      </p>
-      <a href={googleCalendarUrl} target="_blank" rel="noopener noreferrer">
-        <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1 rounded">
-          ➕ Add to Google Calendar
-        </button>
-      </a>
+    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-5 space-y-3 w-full">
+      {/* Title */}
+      <div className="flex items-center justify-between">
+        <h4 className="text-lg font-bold text-violet-700 dark:text-violet-300">{title}</h4>
+      </div>
+
+      {/* Description */}
+      <p className="text-sm text-gray-700 dark:text-gray-300">{description}</p>
+
+      {/* Time */}
+      <div className="text-sm text-gray-500 dark:text-gray-400">
+        🕒{' '}
+        {new Date(start).toLocaleDateString(undefined, {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+        })}{' '}
+        | {new Date(start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} –{' '}
+        {new Date(end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+      </div>
+
+      {/* Button */}
+      <div className="pt-2">
+        <a href={googleCalendarUrl} target="_blank" rel="noopener noreferrer">
+          <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-md transition-all shadow">
+            ➕ Add to Google Calendar
+          </button>
+        </a>
+      </div>
     </div>
   );
 }

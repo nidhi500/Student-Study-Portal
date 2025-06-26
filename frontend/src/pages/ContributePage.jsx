@@ -1,6 +1,5 @@
-// src/pages/ContributePage.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../utils/axiosConfig"; // ✅ Use the new axios instance
 import CommentSection from "../components/CommentSection";
 
 function extractFileId(url) {
@@ -21,7 +20,14 @@ const ContributePage = () => {
   const [contributions, setContributions] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/contributions/my").then((res) => setContributions(res.data));
+    api
+      .get("/api/contributions/my")
+      .then((res) => setContributions(res.data))
+      .catch((err) => {
+        console.error("GET contributions error:", err);
+        alert("❌ Failed to fetch contributions");
+      });
+      
   }, []);
 
   const handleChange = (e) => {
@@ -29,25 +35,33 @@ const ContributePage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const isValidDrive = /^https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)/.test(formData.url);
-    if (!isValidDrive) {
-      alert("❌ Invalid Google Drive link");
-      return;
-    }
+  const isValidDrive = /^https:\/\/drive\.google\.com\/(?:file\/d\/|open\?id=)/.test(formData.url);
+  if (!isValidDrive) {
+    alert("❌ Invalid Google Drive link");
+    return;
+  }
 
-    try {
-      await axios.post("http://localhost:8080/api/contributions/add", formData);
-      alert("✅ Contribution submitted");
-      setFormData({ title: "", description: "", type: "", subject: "", visibility: "", url: "" });
-      const res = await axios.get("http://localhost:8080/api/contributions/my");
-      setContributions(res.data);
-    } catch (err) {
-      console.error(err);
-      alert("❌ Submission failed");
-    }
-  };
+  try {
+    console.log("🔍 Payload about to send:", JSON.stringify(formData));
+
+await api.post("/api/contributions/add", JSON.stringify(formData), {
+  headers: {
+    "Content-Type": "application/json"
+  }
+});
+    alert("✅ Contribution submitted");
+    setFormData({ title: "", description: "", type: "", subject: "", visibility: "", url: "" });
+
+    const res = await api.get("/api/contributions/my");
+    setContributions(res.data);
+  } catch (err) {
+    console.error("POST contribution error:", err);
+    alert("❌ Submission failed");
+  }
+};
+
 
   return (
     <div className="p-6 max-w-3xl mx-auto">
@@ -72,7 +86,12 @@ const ContributePage = () => {
           <div key={item.id} className="bg-white rounded-xl shadow-md p-4 space-y-2">
             <h4 className="text-lg font-bold">{item.title}</h4>
             <p className="text-sm text-gray-600">{item.description}</p>
-            <iframe className="w-full h-52 rounded border" src={`https://drive.google.com/file/d/${extractFileId(item.url)}/preview`} allow="autoplay" title={item.title} />
+            <iframe
+              className="w-full h-52 rounded border"
+              src={`https://drive.google.com/file/d/${extractFileId(item.url)}/preview`}
+              allow="autoplay"
+              title={item.title}
+            />
             <CommentSection contextType="CONTRIBUTION" contextId={item.id} />
           </div>
         ))}

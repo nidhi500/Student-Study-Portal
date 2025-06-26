@@ -1,6 +1,5 @@
 package com.studentcompanion.config;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +74,7 @@ public class SecurityConfig {
                 // Secure endpoints
                 .requestMatchers("/api/users/profile").authenticated()
                 .requestMatchers("/api/comments/**").authenticated() // 👈 Required for comment POST
+                
                 .anyRequest().permitAll() // fallback
             )
             .authenticationProvider(authenticationProvider())

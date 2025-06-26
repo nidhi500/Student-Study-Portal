@@ -1,19 +1,24 @@
 package com.studentcompanion.controller;
 
-import com.studentcompanion.model.Contribution;
-import com.studentcompanion.model.User;
-import com.studentcompanion.repository.ContributionRepository;
-import com.studentcompanion.repository.UserRepository;
-import com.studentcompanion.model.CareerGoal;
-
+import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import com.studentcompanion.model.Contribution;
+import com.studentcompanion.model.User;
+import com.studentcompanion.repository.ContributionRepository;
+import com.studentcompanion.repository.UserRepository;
+import com.studentcompanion.dto.ContributionDTO;
 
 @RestController
 @RequestMapping("/api/contributions")
@@ -29,24 +34,34 @@ private UserRepository userRepository;
 // private CommentRepository commentRepository;
 
 @PostMapping("/add")
-public ResponseEntity<?> addContribution(@RequestBody Contribution contribution, Authentication authentication) {
+public ResponseEntity<?> addContribution(@RequestBody ContributionDTO dto, Authentication authentication) {
     try {
         String email = (authentication != null) ? authentication.getName() : "agrawalnidhi241@gmail.com";
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new RuntimeException("User not found for email: " + email);
+            throw new RuntimeException("User not found");
         }
 
+        Contribution contribution = new Contribution();
+        contribution.setTitle(dto.getTitle());
+        contribution.setDescription(dto.getDescription());
+        contribution.setType(dto.getType());
+        contribution.setSubject(dto.getSubject());
+        contribution.setVisibility(dto.getVisibility());
+        contribution.setUrl(dto.getUrl());
         contribution.setUser(user);
         contribution.setCreatedAt(LocalDateTime.now());
 
-        Contribution saved = contributionRepository.save(contribution);
-        return ResponseEntity.ok(saved);
+        contributionRepository.save(contribution);
+        return ResponseEntity.ok("✅ Contribution saved");
     } catch (Exception e) {
         e.printStackTrace();
         return ResponseEntity.internalServerError().body("❌ Server Error: " + e.getMessage());
     }
 }
+
+
+
 
 @GetMapping("/my")
 public ResponseEntity<?> getUserContributions(Authentication authentication) {
