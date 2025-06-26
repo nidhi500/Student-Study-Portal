@@ -1,34 +1,28 @@
-/* Custom styles for event background colors */
 .event-math {
   background-color: #f59e0b !important; /* amber */
   color: white !important;
   border: none;
 }
-
 .event-physics {
   background-color: #3b82f6 !important; /* blue */
   color: white !important;
   border: none;
 }
-
 .event-dsa {
   background-color: #10b981 !important; /* emerald */
   color: white !important;
   border: none;
 }
-
 .event-de {
   background-color: #8b5cf6 !important; /* violet */
   color: white !important;
   border: none;
 }
-
 .event-english {
   background-color: #ec4899 !important; /* pink */
   color: white !important;
   border: none;
 }
-
 .event-micro {
   background-color: #ef4444 !important; /* red */
   color: white !important;

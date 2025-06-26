@@ -32,7 +32,7 @@ export default function Sidebar({ user }) {
         <div className="mb-8">
           <h2 className="text-xl font-bold truncate">🎓 {user.name}</h2>
           <p className="text-sm text-indigo-200 truncate">{user.enrollment}</p>
-          <p className="text-sm text-indigo-200 truncate">Goal: {user.goal}</p>
+          <p className="text-sm text-indigo-200 truncate">Goal: {user.branch?.name}</p>
         </div>
 
         {/* Navigation */}
@@ -42,7 +42,7 @@ export default function Sidebar({ user }) {
           <NavItem label="Reminders" icon={<Bell size={18} />} onClick={() => goToProfileSection('reminders')} />
           <NavItem label="To-Do List" icon={<CheckSquare size={18} />} onClick={() => goToProfileSection('todos')} />
           <NavItem label="Library" icon={<BookOpen size={18} />} onClick={() => goToProfileSection('schedule')} />
-          <NavItem label="Contribute" icon={<Share2 size={18} />} onClick={() => goToProfileSection('contribute')} />
+          <NavItem label="Contribute" icon={<Share2 size={18} />} onClick={() => navigate('/contribute')} />
         </nav>
       </div>
 

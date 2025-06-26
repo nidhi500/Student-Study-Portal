@@ -45,5 +45,11 @@ public class AuthResponse {
     public void setGoal(CareerGoal goal) {
         this.goal = goal;
     }
+    public String getEnrollmentNumber() {
+        return enrollmentNumber;
+    }
+    public void setEnrollmentNumber(String enrollmentNumber) {
+        this.enrollmentNumber = enrollmentNumber;   
+    }
 
 }
