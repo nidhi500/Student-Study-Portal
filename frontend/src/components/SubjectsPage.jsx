@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Header from "../components/Header"; 
 
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 
@@ -35,19 +36,16 @@ export default function SubjectPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-100 to-blue-100">
-      {/* Navbar */}
-      <nav className="bg-white shadow-md py-4 px-6 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-indigo-700">Student Companion</h1>
-        <div className="text-gray-700 font-medium">
-          Semester <span className="text-indigo-700 font-semibold">{semesterId}</span> —{" "}
-          <span className="text-indigo-700 font-semibold uppercase">{branch}</span>
-        </div>
-      </nav>
+      {/* ✅ Shared Header */}
+      <Header />
 
-      {/* Header */}
+      {/* Page-specific Info Header */}
       <header className="bg-gradient-to-r from-indigo-600 to-blue-500 text-white text-center py-8 px-6 shadow-lg">
         <h2 className="text-3xl font-bold mb-1">📘 Subjects</h2>
         <p className="text-sm">Explore your subjects with notes, videos, PDFs and more!</p>
+        <div className="mt-2 text-sm">
+          Semester <span className="font-semibold">{semesterId}</span> — <span className="uppercase font-semibold">{branch}</span>
+        </div>
       </header>
 
       {/* Content */}
